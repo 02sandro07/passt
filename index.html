@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passt.</title>
+<meta name="description" content="Passt. findet den Termin, der allen passt: Link teilen, Tage streichen, fertig. Ohne Anmeldung, ohne App-Zwang.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232E6B4E'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Georgia' font-weight='bold' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{
+  --bg:#F4F6F1;
+  --card:#FFFFFF;
+  --ink:#1E2A22;
+  --muted:#5C6B60;
+  --line:#DDE4DA;
+  --accent:#2E6B4E;
+  --accent-deep:#1E4A36;
+  --accent-ink:#FFFFFF;
+  --free-bg:#DFF0E4;
+  --free-ink:#1F5C3D;
+  --free-line:#B9DCC6;
+  --busy-bg:#F6DCD7;
+  --busy-ink:#8C3B32;
+  --busy-line:#E6BBB3;
+  --gold:#9A6E1F;
+  --gold-bg:#F5EBD2;
+  --gold-line:#D9BC7A;
+  --wa:#1FAF57;
+  --wa-ink:#FFFFFF;
+  --shadow:0 1px 2px rgba(30,42,34,.06),0 4px 14px rgba(30,42,34,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A15;
+    --card:#1C241E;
+    --ink:#E7EEE7;
+    --muted:#9AA89D;
+    --line:#2C362E;
+    --accent:#6FBF92;
+    --accent-deep:#8FD3AF;
+    --accent-ink:#0F1F16;
+    --free-bg:#1E3B2B;
+    --free-ink:#A5DDBC;
+    --free-line:#2E5940;
+    --busy-bg:#43261F;
+    --busy-ink:#EBA89C;
+    --busy-line:#5F352C;
+    --gold:#DDB25F;
+    --gold-bg:#33290F;
+    --gold-line:#6E5827;
+    --wa:#2BC46A;
+    --wa-ink:#0E1F14;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A15;
+  --card:#1C241E;
+  --ink:#E7EEE7;
+  --muted:#9AA89D;
+  --line:#2C362E;
+  --accent:#6FBF92;
+  --accent-deep:#8FD3AF;
+  --accent-ink:#0F1F16;
+  --free-bg:#1E3B2B;
+  --free-ink:#A5DDBC;
+  --free-line:#2E5940;
+  --busy-bg:#43261F;
+  --busy-ink:#EBA89C;
+  --busy-line:#5F352C;
+  --gold:#DDB25F;
+  --gold-bg:#33290F;
+  --gold-line:#6E5827;
+  --wa:#2BC46A;
+  --wa-ink:#0E1F14;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.5;
+  -webkit-tap-highlight-color:transparent;
+}
+#app{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+.brand{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-weight:700;color:var(--accent);text-decoration:none;
+}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin:0 0 22px}
+.topbar .brand{font-size:1.35rem}
+.topbar a.mini{color:var(--muted);font-size:.88rem;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.eyebrow{
+  font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;margin:0 0 4px;
+}
+h1{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-weight:700;font-size:1.9rem;line-height:1.12;margin:0 0 8px;text-wrap:balance;
+}
+.sub{color:var(--muted);margin:0 0 20px;font-size:.97rem}
+h2{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-weight:600;font-size:1.12rem;margin:26px 0 10px;
+}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:16px;box-shadow:var(--shadow);
+}
+.notice{
+  background:var(--gold-bg);color:var(--ink);border:1px solid var(--gold-line);
+  border-radius:10px;padding:10px 12px;margin:0 0 16px;font-size:.92rem;
+}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.82rem;margin:0 0 4px}
+.live .dot-live{width:8px;height:8px;border-radius:50%;background:var(--wa);display:inline-block}
+.people{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:8px 14px;font-size:.95rem;font-weight:500;color:var(--ink);
+  cursor:pointer;font-family:inherit;
+}
+.chip.me{border-color:var(--accent)}
+.chip small{color:var(--muted);font-weight:400}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:12px;padding:13px 20px;font-size:1rem;font-weight:600;
+  font-family:inherit;cursor:pointer;text-decoration:none;color:inherit;
+}
+.btn:focus-visible,.chip:focus-visible,.day:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%}
+.btn-wa{background:var(--wa);color:var(--wa-ink);width:100%;font-size:1.02rem}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn-danger{background:transparent;color:var(--busy-ink);border:1px solid var(--busy-line)}
+.btn-row{display:flex;gap:10px;margin-top:14px}
+.btn-row .btn{flex:1}
+.btn[disabled]{opacity:.55;cursor:default}
+.stack{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
+label:first-child{margin-top:0}
+input[type=text],input[type=date]{
+  width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);
+  color:var(--ink);font:inherit;padding:11px 12px;
+}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.field-error{color:var(--busy-ink);font-size:.88rem;margin:6px 0 0}
+.hint{color:var(--muted);font-size:.92rem;margin:4px 0 12px}
+.legend{display:flex;gap:14px;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:14px;height:14px;border-radius:4px;display:inline-block}
+.dot-free{background:var(--free-bg);border:1px solid var(--free-line)}
+.dot-busy{background:var(--busy-bg);border:1px solid var(--busy-line)}
+.month{margin:18px 0 0}
+.month-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.month-head b{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:600;font-size:1rem}
+.month-head .mini{display:flex;gap:6px}
+.mini button{
+  border:1px solid var(--line);background:transparent;color:var(--muted);
+  border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:500;
+  cursor:pointer;font-family:inherit;
+}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-h{
+  text-align:center;font-size:.75rem;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.04em;padding:2px 0;
+}
+.day{
+  aspect-ratio:1/1;border-radius:10px;border:1px solid var(--free-line);
+  background:var(--free-bg);color:var(--free-ink);
+  font:inherit;font-weight:600;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;
+}
+.day.busy{
+  background:var(--busy-bg);border-color:var(--busy-line);color:var(--busy-ink);
+  text-decoration:line-through;font-weight:400;
+}
+.day.blank{visibility:hidden}
+.quick{display:flex;gap:8px;margin:12px 0 0}
+.quick .btn{flex:1;padding:9px 8px;font-size:.85rem;font-weight:500}
+.slot{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;margin:0 0 8px;box-shadow:var(--shadow);
+}
+.slot.perfect{border-color:var(--free-line);background:var(--free-bg)}
+.slot-date{font-weight:600}
+.slot.perfect .slot-date{color:var(--free-ink)}
+.slot-sub{font-size:.85rem;color:var(--muted);margin-top:1px}
+.slot.perfect .slot-sub{color:var(--free-ink);opacity:.85}
+.pill{
+  flex-shrink:0;border-radius:999px;padding:4px 11px;font-size:.85rem;font-weight:600;
+  font-variant-numeric:tabular-nums;background:var(--bg);color:var(--muted);
+  border:1px solid var(--line);
+}
+.slot.perfect .pill{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tag{
+  display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--gold);margin-left:8px;
+}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:.92rem;padding:6px 2px}
+.settings{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:30px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.92rem;
+}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:1.1rem;font-weight:600;
+  cursor:pointer;font-family:inherit;
+}
+.stepper b{min-width:118px;text-align:center;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);font-size:.95rem}
+.tiles{display:flex;gap:6px;margin:0 0 22px}
+.tile{
+  width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:.95rem;background:var(--free-bg);color:var(--free-ink);
+  border:1px solid var(--free-line);font-variant-numeric:tabular-nums;
+}
+.tile.x{background:var(--busy-bg);color:var(--busy-ink);border-color:var(--busy-line);text-decoration:line-through;font-weight:400}
+.tile.win{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.mylist{display:flex;flex-direction:column;gap:8px;margin:10px 0 0}
+.mylist a{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);
+}
+.mylist a b{font-weight:600}
+.mylist a span{color:var(--muted);font-size:.85rem}
+.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+.steps li{
+  counter-increment:s;display:flex;gap:12px;align-items:baseline;margin:10px 0;color:var(--muted);
+}
+.steps li::before{
+  content:counter(s);flex-shrink:0;width:26px;height:26px;border-radius:50%;
+  background:var(--free-bg);color:var(--free-ink);border:1px solid var(--free-line);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:600;transform:translateY(4px);
+}
+.steps li b{color:var(--ink)}
+.prolist{margin:10px 0;padding-left:0;list-style:none}
+.prolist li{margin:8px 0;padding-left:26px;position:relative;font-size:.95rem}
+.prolist li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700}
+.footer{
+  margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.82rem;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+.footer a{color:var(--muted)}
+.copied{color:var(--free-ink);font-size:.9rem;font-weight:600;text-align:center;min-height:1.4em;margin:6px 0 0}
+.share-title{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:700;font-size:1.35rem;margin:0 0 8px}
+@media (prefers-reduced-motion: no-preference){
+  .day,.chip,.btn{transition:background .12s,border-color .12s,color .12s}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+"use strict";
+
+/* ================== Konfiguration ================== */
+var DB_URL="https://terminfinder-5b9bf-default-rtdb.europe-west1.firebasedatabase.app";
+var ROOT="passt";
+var PRICE="4,99 €";
+var FREE_ACTIVE_PLANNERS=1;
+var FREE_MAX_PEOPLE=8;
+var PRO_MAX_PEOPLE=20;
+var MAX_RANGE_DAYS=370;
+
+var WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
+var MON=["Jän.","Feb.","März","Apr.","Mai","Juni","Juli","Aug.","Sep.","Okt.","Nov.","Dez."];
+var MONL=["Jänner","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+
+/* ================== Hilfen ================== */
+function h(tag,attrs){
+  var el=document.createElement(tag);
+  if(attrs) for(var k in attrs){
+    if(k==="text") el.textContent=attrs[k];
+    else if(k==="onclick") el.addEventListener("click",attrs[k]);
+    else if(k==="oninput") el.addEventListener("input",attrs[k]);
+    else el.setAttribute(k,attrs[k]);
+  }
+  for(var i=2;i<arguments.length;i++){
+    var c=arguments[i];
+    if(c!=null) el.appendChild(typeof c==="string"?document.createTextNode(c):c);
+  }
+  return el;
+}
+function lsGet(k,fb){ try{ var v=localStorage.getItem(k); return v===null?fb:JSON.parse(v); }catch(e){ return fb; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function todayStr(){
+  var d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function parseDate(s){ var m=(s||"").split("-"); return new Date(+m[0],+m[1]-1,+m[2]); }
+function newId(){
+  var a="abcdefghjkmnpqrstuvwxyz23456789",s="";
+  var r=new Uint32Array(10);
+  (window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(r):r.forEach(function(_,i){r[i]=Math.random()*1e9;});
+  for(var i=0;i<10;i++) s+=a[r[i]%a.length];
+  return s;
+}
+
+/* ================== Datenbank ================== */
+function dbGet(path){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{cache:"no-store"}).then(function(r){
+    if(!r.ok) throw new Error("GET "+r.status);
+    return r.json();
+  });
+}
+function dbPut(path,val){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{
+    method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)
+  }).then(function(r){ if(!r.ok) throw new Error("PUT "+r.status); return r.json(); });
+}
+function dbPost(path,val){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)
+  }).then(function(r){ if(!r.ok) throw new Error("POST "+r.status); return r.json(); });
+}
+function dbDelete(path){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{method:"DELETE"}).then(function(r){
+    if(!r.ok) throw new Error("DELETE "+r.status);
+  });
+}
+function track(ev,data){
+  var payload={ev:ev,t:new Date().toISOString().slice(0,10)};
+  if(data) payload.d=data;
+  dbPost("/stats",payload).catch(function(){});
+}
+
+/* ================== Tages-Codierung ================== */
+function decodeDays(str,N){
+  var out=[];
+  if(!str||typeof str!=="string") return out;
+  str.split(",").forEach(function(part){
+    var m=part.split("-");
+    var a=parseInt(m[0],10), b=m.length>1?parseInt(m[1],10):a;
+    if(isNaN(a)||isNaN(b)) return;
+    for(var d=Math.max(0,a); d<=Math.min(N-1,b); d++) out.push(d);
+  });
+  return out;
+}
+function encodeDays(arr){
+  var a=arr.slice().sort(function(x,y){return x-y;});
+  var parts=[],i=0;
+  while(i<a.length){
+    var j=i;
+    while(j+1<a.length && a[j+1]===a[j]+1) j++;
+    parts.push(j>i ? a[i]+"-"+a[j] : String(a[i]));
+    i=j+1;
+  }
+  return parts.join(",");
+}
+
+/* ================== Meine Planer (Gerät) ================== */
+function myPlanners(){ return lsGet("passt-mine",[]); }
+function rememberPlanner(id,title,end){
+  var list=myPlanners().filter(function(p){return p.id!==id;});
+  list.unshift({id:id,title:title,end:end});
+  lsSet("passt-mine",list.slice(0,20));
+}
+function forgetPlanner(id){
+  lsSet("passt-mine",myPlanners().filter(function(p){return p.id!==id;}));
+}
+function activePlanners(){
+  var t=todayStr();
+  return myPlanners().filter(function(p){return p.end>=t;});
+}
+function hasPro(){ return lsGet("passt-pro",false); }
+
+/* ================== Router ================== */
+var view={name:"home"};
+function route(){
+  var hs=location.hash.replace(/^#\/?/,"");
+  if(hs==="neu"){ view={name:"create"}; render(); }
+  else if(hs==="pro"){ view={name:"pro",from:view.name}; render(); }
+  else if(hs.indexOf("p/")===0){ openPlanner(hs.slice(2).split("?")[0]); }
+  else { view={name:"home"}; render(); stopLive(); }
+}
+window.addEventListener("hashchange",route);
+
+/* ================== Planer-Zustand ================== */
+var P=null;   /* {id, meta:{title,start,end,nights,cap}, people:[{key,name,busy}], N, months} */
+var ui={mode:"list",editingName:null,draftName:"",busy:new Set(),nameError:"",notice:"",saving:false,confirmDelete:false,live:false,copied:""};
+function myNameFor(id){ return lsGet("passt-name-"+id,null); }
+
+function buildCalendarInfo(meta){
+  var start=parseDate(meta.start), end=parseDate(meta.end);
+  var N=Math.round((end-start)/86400000)+1;
+  function dateOf(off){ return new Date(start.getFullYear(),start.getMonth(),start.getDate()+off); }
+  var months=[],off=0;
+  while(off<N){
+    var dt=dateOf(off), y=dt.getFullYear(), m=dt.getMonth(), from=off;
+    while(off<N){ var t=dateOf(off); if(t.getMonth()!==m||t.getFullYear()!==y) break; off++; }
+    months.push({y:y,m:m,fromOff:from,toOff:off-1});
+  }
+  return {N:N,months:months,dateOf:dateOf};
+}
+
+function applyPlanner(id,raw){
+  if(!raw||!raw.meta||!raw.meta.start||!raw.meta.end){ P={id:id,missing:true}; return; }
+  var meta={
+    title:String(raw.meta.title||"Unser Termin").slice(0,60),
+    start:raw.meta.start,end:raw.meta.end,
+    nights:Math.min(7,Math.max(1,parseInt(raw.meta.nights,10)||2)),
+    cap:raw.meta.cap==="pro"?PRO_MAX_PEOPLE:FREE_MAX_PEOPLE
+  };
+  var cal=buildCalendarInfo(meta);
+  var people=[];
+  if(raw.people&&typeof raw.people==="object"){
+    Object.keys(raw.people).forEach(function(k){
+      var p=raw.people[k];
+      if(!p||typeof p.name!=="string") return;
+      var name=p.name.trim().slice(0,40);
+      if(!name||people.some(function(q){return q.name===name;})) return;
+      people.push({key:k,name:name,busy:decodeDays(p.busy,cal.N)});
+    });
+  }
+  people.sort(function(a,b){return a.name.localeCompare(b.name,"de");});
+  P={id:id,meta:meta,people:people,N:cal.N,months:cal.months,dateOf:cal.dateOf};
+}
+
+var pendingShareNew=false;
+function openPlanner(id){
+  view={name:"planner",id:id};
+  P=null; ui.mode="loading"; render();
+  dbGet("/p/"+id).then(function(raw){
+    applyPlanner(id,raw);
+    if(!P.missing) rememberVisit();
+    ui.mode=P.missing?"missing":(pendingShareNew?"share-new":"list");
+    pendingShareNew=false;
+    render();
+    startLive(id); startPolling(id);
+  }).catch(function(){ ui.mode="error"; render(); });
+}
+function rememberVisit(){
+  /* Besuchte Planer nur merken, wenn schon in Liste (eigene) — Teilnehmer nicht zumüllen */
+  var mine=myPlanners().some(function(p){return p.id===P.id;});
+  if(mine) rememberPlanner(P.id,P.meta.title,P.meta.end);
+}
+function refreshPlanner(){
+  if(!P) return Promise.resolve();
+  return dbGet("/p/"+P.id).then(function(raw){
+    var keep=ui.mode;
+    applyPlanner(P.id,raw);
+    if(keep==="list"&&!P.missing) render();
+  });
+}
+
+/* ================== Live ================== */
+var es=null,pollTimer=null,refreshQueued=false;
+function queueRefresh(){
+  if(refreshQueued) return;
+  refreshQueued=true;
+  setTimeout(function(){ refreshQueued=false; refreshPlanner().catch(function(){}); },400);
+}
+function startLive(id){
+  stopLive();
+  try{
+    es=new EventSource(DB_URL+"/"+ROOT+"/p/"+id+".json");
+    es.addEventListener("put",function(){ ui.live=true; queueRefresh(); });
+    es.addEventListener("patch",function(){ ui.live=true; queueRefresh(); });
+    es.onerror=function(){
+      ui.live=false;
+      if(es){ es.close(); es=null; }
+      setTimeout(function(){ if(view.name==="planner"&&view.id===id) startLive(id); },15000);
+    };
+  }catch(e){}
+}
+function stopLive(){
+  if(es){ es.close(); es=null; }
+  if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
+}
+function startPolling(id){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer=setInterval(function(){
+    if(view.name==="planner"&&view.id===id&&ui.mode==="list") refreshPlanner().catch(function(){});
+  },5000);
+}
+
+/* ================== Fenster-Berechnung ================== */
+function computeSlots(){
+  var len=P.meta.nights+1,out=[];
+  for(var s=0;s+len-1<P.N;s++){
+    var days=[]; for(var i=0;i<len;i++) days.push(s+i);
+    var cant=P.people.filter(function(p){
+      return days.some(function(d){return p.busy.indexOf(d)>=0;});
+    }).map(function(p){return p.name;});
+    var sat=days.some(function(d){return P.dateOf(d).getDay()===6;});
+    var sun=days.some(function(d){return P.dateOf(d).getDay()===0;});
+    out.push({s:s,e:s+len-1,cant:cant,can:P.people.length-cant.length,
+      fullWeekend:sat&&sun,
+      wkd:days.filter(function(d){var g=P.dateOf(d).getDay();return g===0||g===6;}).length});
+  }
+  return out;
+}
+function fmt(off){ var dt=P.dateOf(off); return WD[dt.getDay()]+" "+dt.getDate()+". "+MON[dt.getMonth()]; }
+
+/* ================== Rendern ================== */
+function render(){
+  var app=document.getElementById("app");
+  app.textContent="";
+  if(view.name==="home") renderHome(app);
+  else if(view.name==="create") renderCreate(app);
+  else if(view.name==="pro") renderPro(app);
+  else renderPlannerView(app);
+  window.scrollTo(0,0);
+}
+
+/* ---------- Startseite ---------- */
+function renderHome(app){
+  app.appendChild(h("div",{class:"topbar"},
+    h("a",{class:"brand",href:"#",text:"Passt."}),
+    h("a",{class:"mini",href:"#/pro",text:"Pro"})));
+
+  app.appendChild(h("div",{class:"tiles","aria-hidden":"true"},
+    h("span",{class:"tile x",text:"12"}),h("span",{class:"tile",text:"13"}),
+    h("span",{class:"tile win",text:"14"}),h("span",{class:"tile win",text:"15"}),
+    h("span",{class:"tile win",text:"16"}),h("span",{class:"tile x",text:"17"}),
+    h("span",{class:"tile",text:"18"})));
+
+  app.appendChild(h("h1",{text:"Findet den Termin, der allen passt."}));
+  app.appendChild(h("p",{class:"sub",text:"Für Wochenendtrips, Urlaube und alles, was mehrere Tage dauert: Link in die Gruppe schicken, jeder streicht die Tage, an denen er nicht kann — Passt. rechnet live aus, welche Zeitfenster für alle funktionieren. Ohne Anmeldung, ohne App-Zwang."}));
+
+  app.appendChild(h("a",{class:"btn btn-primary",href:"#/neu",text:"Neuen Planer erstellen"}));
+
+  var act=activePlanners(), all=myPlanners();
+  if(all.length){
+    app.appendChild(h("h2",{text:"Deine Planer"}));
+    var list=h("div",{class:"mylist"});
+    all.forEach(function(p){
+      var past=p.end<todayStr();
+      list.appendChild(h("a",{href:"#/p/"+p.id},
+        h("b",{text:p.title}),
+        h("span",{text:past?"vorbei":"aktiv"})));
+    });
+    app.appendChild(list);
+  }else{
+    app.appendChild(h("h2",{text:"So funktioniert's"}));
+    var steps=h("ol",{class:"steps"});
+    [["Planer erstellen","Titel, Zeitraum und Dauer festlegen — dauert 30 Sekunden."],
+     ["Link in die Gruppe schicken","WhatsApp genügt. Niemand muss etwas installieren oder sich anmelden."],
+     ["Tage streichen","Jeder tippt die Tage an, an denen er nicht kann."],
+     ["Termin ablesen","Passt. zeigt live alle Zeitfenster, die für alle passen — Wochenenden zuerst."]
+    ].forEach(function(s){
+      steps.appendChild(h("li",null,h("span",null,h("b",{text:s[0]})," — "+s[1])));
+    });
+    app.appendChild(steps);
+  }
+
+  app.appendChild(h("div",{class:"footer"},
+    h("span",null,"Passt. — made in Tirol"),
+    h("a",{href:"#/pro",text:"Passt. Pro"})));
+}
+
+/* ---------- Planer erstellen ---------- */
+var draft={title:"",start:"",end:"",nights:2,err:""};
+function renderCreate(app){
+  app.appendChild(h("div",{class:"topbar"},
+    h("a",{class:"brand",href:"#",text:"Passt."})));
+
+  /* Free-Limit prüfen */
+  var act=activePlanners();
+  if(act.length>=FREE_ACTIVE_PLANNERS && !hasPro()){
+    app.appendChild(h("h1",{text:"Ein Planer läuft schon"}));
+    app.appendChild(h("p",{class:"sub"},
+      "Mit Passt. Free läuft ein Planer gleichzeitig — deiner ist: ",
+      h("b",{text:act[0].title}),". Mit ",h("b",{text:"Passt. Pro"})," ("+PRICE+" einmalig) kannst du beliebig viele Planer gleichzeitig laufen lassen."));
+    var stack=h("div",{class:"stack"});
+    stack.appendChild(h("a",{class:"btn btn-primary",href:"#/pro",text:"Passt. Pro ansehen"}));
+    stack.appendChild(h("a",{class:"btn btn-ghost",href:"#/p/"+act[0].id,text:"Zum laufenden Planer"}));
+    stack.appendChild(h("button",{class:"btn btn-ghost",text:"Laufenden Planer aus meiner Liste entfernen",onclick:function(){
+      forgetPlanner(act[0].id); render();
+    }}));
+    app.appendChild(stack);
+    app.appendChild(h("p",{class:"hint",style:"margin-top:14px",text:"Entfernen löscht nur den Eintrag auf diesem Gerät — der Link der Gruppe funktioniert weiter."}));
+    return;
+  }
+
+  app.appendChild(h("h1",{text:"Neuer Planer"}));
+  var card=h("div",{class:"card"});
+  card.appendChild(h("label",{for:"c-title",text:"Worum geht's?"}));
+  card.appendChild(h("input",{type:"text",id:"c-title",placeholder:"z. B. Skiwochenende",value:draft.title,
+    oninput:function(e){draft.title=e.target.value;draft.err="";}}));
+
+  card.appendChild(h("label",{for:"c-start",text:"Frühester Tag"}));
+  card.appendChild(h("input",{type:"date",id:"c-start",value:draft.start,min:todayStr(),
+    oninput:function(e){draft.start=e.target.value;draft.err="";}}));
+  card.appendChild(h("label",{for:"c-end",text:"Spätester Tag"}));
+  card.appendChild(h("input",{type:"date",id:"c-end",value:draft.end,min:todayStr(),
+    oninput:function(e){draft.end=e.target.value;draft.err="";}}));
+
+  card.appendChild(h("label",{text:"Wie lange fahrt ihr?"}));
+  var minus=h("button",{text:"−",onclick:function(){if(draft.nights>1){draft.nights--;render();}},"aria-label":"Eine Nacht weniger"});
+  var plus=h("button",{text:"+",onclick:function(){if(draft.nights<7){draft.nights++;render();}},"aria-label":"Eine Nacht mehr"});
+  card.appendChild(h("div",{class:"stepper"},minus,
+    h("b",{text:draft.nights+" Nächte · "+(draft.nights+1)+" Tage"}),plus));
+  card.appendChild(h("p",{class:"hint",style:"margin-top:6px",text:"Lässt sich später jederzeit ändern."}));
+
+  if(draft.err) card.appendChild(h("p",{class:"field-error",text:draft.err}));
+
+  var createBtn=h("button",{class:"btn btn-primary",style:"margin-top:16px",
+    text:ui.saving?"Wird erstellt …":"Planer erstellen",onclick:onCreate});
+  if(ui.saving) createBtn.disabled=true;
+  card.appendChild(createBtn);
+  app.appendChild(card);
+}
+
+function onCreate(){
+  var title=draft.title.trim().slice(0,60);
+  if(!title){ draft.err="Gib dem Planer einen Namen — z. B. „Skiwochenende“."; render(); return; }
+  if(!draft.start||!draft.end){ draft.err="Bitte wähle den Zeitraum (frühester und spätester Tag)."; render(); return; }
+  var s=parseDate(draft.start), e=parseDate(draft.end);
+  var days=Math.round((e-s)/86400000)+1;
+  if(days<draft.nights+1){ draft.err="Der Zeitraum ist kürzer als die Reisedauer."; render(); return; }
+  if(days>MAX_RANGE_DAYS){ draft.err="Der Zeitraum ist sehr lang — bitte maximal ein Jahr."; render(); return; }
+  ui.saving=true; render();
+  var id=newId();
+  dbPut("/p/"+id+"/meta",{
+    title:title,start:draft.start,end:draft.end,nights:draft.nights,
+    cap:hasPro()?"pro":"free",created:todayStr()
+  }).then(function(){
+    ui.saving=false;
+    rememberPlanner(id,title,draft.end);
+    track("create");
+    draft={title:"",start:"",end:"",nights:2,err:""};
+    pendingShareNew=true;
+    location.hash="#/p/"+id;
+  }).catch(function(){
+    ui.saving=false;
+    draft.err="Erstellen hat nicht geklappt — prüfe deine Internetverbindung und versuch's nochmal.";
+    render();
+  });
+}
+
+/* ---------- Pro ---------- */
+function renderPro(app){
+  app.appendChild(h("div",{class:"topbar"},
+    h("a",{class:"brand",href:"#",text:"Passt."})));
+  app.appendChild(h("p",{class:"eyebrow",text:PRICE+" · einmalig · kein Abo"}));
+  app.appendChild(h("h1",{text:"Passt. Pro"}));
+  app.appendChild(h("p",{class:"sub",text:"Für alle, die öfter organisieren. Einmal zahlen, für immer freigeschaltet — deine Gruppe zahlt nie etwas."}));
+  var ul=h("ul",{class:"prolist"});
+  ["Beliebig viele Planer gleichzeitig",
+   "Große Gruppen: bis "+PRO_MAX_PEOPLE+" statt "+FREE_MAX_PEOPLE+" Personen",
+   "Erinnerung an Nachzügler: „3 fehlen noch“ per Knopfdruck",
+   "Termin fixieren und für alle in den Kalender exportieren"
+  ].forEach(function(t){ ul.appendChild(h("li",{text:t})); });
+  app.appendChild(ul);
+
+  var done=lsGet("passt-pro-interest",false);
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{style:"margin:0 0 10px",text:done?
+    "Danke! Du stehst auf der Liste — Pro erscheint zusammen mit der Passt.-App im App Store und bei Google Play.":
+    "Pro erscheint zusammen mit der Passt.-App für iPhone und Android. Sag uns, dass du dabei bist:"}));
+  if(!done){
+    card.appendChild(h("button",{class:"btn btn-primary",text:"Pro vormerken ("+PRICE+" einmalig)",onclick:function(){
+      lsSet("passt-pro-interest",true);
+      track("pro-interest");
+      render();
+    }}));
+    card.appendChild(h("p",{class:"hint",style:"margin:10px 0 0",text:"Unverbindlich, keine E-Mail nötig — wir zählen nur anonym das Interesse."}));
+  }
+  app.appendChild(card);
+  app.appendChild(h("div",{class:"stack"},
+    h("a",{class:"btn btn-ghost",href:"#",text:"Zurück"})));
+}
+
+/* ---------- Planer-Ansicht ---------- */
+function renderPlannerView(app){
+  app.appendChild(h("div",{class:"topbar"},
+    h("a",{class:"brand",href:"#",text:"Passt."}),
+    h("a",{class:"mini",href:"#/neu",text:"+ Neuer Planer"})));
+
+  if(ui.mode==="loading"){
+    app.appendChild(h("p",{class:"sub",text:"Einen Moment, der Planer wird geladen …"}));
+    return;
+  }
+  if(ui.mode==="error"||ui.mode==="missing"){
+    app.appendChild(h("h1",{text:ui.mode==="missing"?"Planer nicht gefunden":"Verbindung fehlgeschlagen"}));
+    app.appendChild(h("p",{class:"sub",text:ui.mode==="missing"?
+      "Unter diesem Link liegt kein Planer (mehr). Prüfe, ob der Link vollständig kopiert wurde.":
+      "Der Planer konnte nicht geladen werden. Prüfe kurz deine Internetverbindung."}));
+    app.appendChild(h("a",{class:"btn btn-primary",href:"#",text:"Zur Startseite"}));
+    return;
+  }
+
+  app.appendChild(h("p",{class:"eyebrow",text:rangeLabel()+" · "+P.meta.nights+" Nächte · "+(P.meta.nights+1)+" Tage"}));
+  app.appendChild(h("h1",{text:P.meta.title}));
+
+  if(ui.mode==="share-new"){ renderShareNew(app); return; }
+
+  app.appendChild(h("p",{class:"sub",text:"Trag dich kurz ein — alle sehen sofort, welche Termine passen."}));
+  if(ui.notice) app.appendChild(h("div",{class:"notice",text:ui.notice}));
+  if(ui.mode==="edit"){ renderEdit(app); return; }
+  if(ui.mode==="full"){ renderFull(app); return; }
+  renderList(app);
+}
+function rangeLabel(){
+  var s=parseDate(P.meta.start),e=parseDate(P.meta.end);
+  var a=s.getDate()+". "+MON[s.getMonth()], b=e.getDate()+". "+MON[e.getMonth()]+" "+e.getFullYear();
+  return a+(s.getFullYear()!==e.getFullYear()?" "+s.getFullYear():"")+" – "+b;
+}
+
+function renderShareNew(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{class:"share-title",text:"Planer erstellt!"}));
+  card.appendChild(h("p",{class:"hint",style:"margin:0 0 12px",
+    text:"Schick jetzt den Link in eure Gruppe — und trag am besten gleich selbst deine Tage ein."}));
+  var stack=h("div",{class:"stack"});
+  stack.appendChild(h("a",{class:"btn btn-wa",
+    href:"https://wa.me/?text="+encodeURIComponent(shareMessage()),
+    target:"_blank",rel:"noopener",text:"Per WhatsApp teilen"}));
+  var copied=h("p",{class:"copied",text:ui.copied});
+  stack.appendChild(h("button",{class:"btn btn-ghost",text:"Link kopieren",onclick:function(){copyLink(copied);}}));
+  stack.appendChild(copied);
+  stack.appendChild(h("button",{class:"btn btn-primary",text:"Jetzt meine Tage eintragen",onclick:function(){
+    ui.mode="edit"; openEditFor(null); }}));
+  card.appendChild(stack);
+  app.appendChild(card);
+}
+function shareURL(){ return location.href.split("#")[0]+"#/p/"+P.id; }
+function shareMessage(){
+  return "⛺ "+P.meta.title+" — wann passt's dir? Trag deine Tage hier ein (30 Sekunden, keine Anmeldung):\n"+shareURL();
+}
+function copyLink(el){
+  var url=shareURL();
+  function done(ok){ ui.copied=ok?"Link kopiert!":"Kopieren ging nicht — kopiere die Adresse oben aus dem Browser."; if(el){el.textContent=ui.copied;} }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){done(true);},function(){done(false);});
+  }else done(false);
+}
+
+function renderList(app){
+  if(ui.live) app.appendChild(h("p",{class:"live"},h("span",{class:"dot-live"}),"live — Änderungen erscheinen sofort"));
+  app.appendChild(h("h2",{text:"Wer hat sich schon eingetragen?"}));
+  var myName=myNameFor(P.id);
+  if(P.people.length){
+    var row=h("div",{class:"people"});
+    P.people.forEach(function(p){
+      var free=P.N-p.busy.length;
+      var isMe=p.name===myName;
+      row.appendChild(h("button",{class:"chip"+(isMe?" me":""),onclick:function(){openEditFor(p.name);}},
+        p.name+(isMe?" (du)":"")+" ",h("small",{text:free+" Tage frei ✎"})));
+    });
+    app.appendChild(row);
+    app.appendChild(h("p",{class:"hint",text:"Zum Ändern auf deinen Namen tippen."}));
+  }else{
+    app.appendChild(h("p",{class:"empty",text:"Noch niemand. Mach du den Anfang!"}));
+  }
+  var isIn=myName&&P.people.some(function(p){return p.name===myName;});
+  app.appendChild(h("button",{class:"btn btn-primary",onclick:function(){
+    if(!isIn && P.people.length>=P.meta.cap){ ui.mode="full"; render(); return; }
+    openEditFor(isIn?myName:null);
+  },text:isIn?"Meine Tage ändern":"+ Ich trag mich ein"}));
+
+  renderResults(app);
+
+  var minus=h("button",{text:"−",onclick:function(){changeNights(-1);},"aria-label":"Eine Nacht weniger"});
+  var plus=h("button",{text:"+",onclick:function(){changeNights(1);},"aria-label":"Eine Nacht mehr"});
+  app.appendChild(h("div",{class:"settings"},
+    h("span",{text:"Wie lange fahrt ihr?"}),
+    h("div",{class:"stepper"},minus,
+      h("b",{text:P.meta.nights+" Nächte · "+(P.meta.nights+1)+" Tage"}),plus)));
+
+  app.appendChild(h("div",{class:"stack"},
+    h("a",{class:"btn btn-ghost",
+      href:"https://wa.me/?text="+encodeURIComponent(shareMessage()),
+      target:"_blank",rel:"noopener",text:"Link per WhatsApp teilen"})));
+
+  app.appendChild(h("div",{class:"footer"},
+    h("a",{href:"#",text:"Erstellt mit Passt. — kostenlos eigenen Planer starten"})));
+}
+
+function renderFull(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{class:"share-title",text:"Diese Gruppe ist voll"}));
+  card.appendChild(h("p",{style:"margin:0 0 10px"},
+    "In diesem Planer sind schon "+P.meta.cap+" Personen — mehr passt in der kostenlosen Version nicht rein. ",
+    "Die Person, die den Planer erstellt hat, kann ihn mit ",h("b",{text:"Passt. Pro"})," auf "+PRO_MAX_PEOPLE+" Plätze erweitern."));
+  card.appendChild(h("div",{class:"stack"},
+    h("a",{class:"btn btn-primary",href:"#/pro",text:"Passt. Pro ansehen"}),
+    h("button",{class:"btn btn-ghost",text:"Zurück",onclick:function(){ui.mode="list";render();}})));
+  app.appendChild(card);
+}
+
+function openEditFor(name){
+  ui.mode="edit"; ui.editingName=name; ui.nameError=""; ui.notice=""; ui.confirmDelete=false;
+  if(name){
+    var p=P.people.filter(function(x){return x.name===name;})[0];
+    ui.draftName=name; ui.busy=new Set(p?p.busy:[]);
+  }else{
+    var remembered=myNameFor(P.id);
+    ui.draftName=(remembered&&!P.people.some(function(p){return p.name===remembered;}))?remembered:"";
+    ui.busy=new Set();
+  }
+  render();
+}
+
+function renderEdit(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("label",{for:"tf-name",text:"Dein Name"}));
+  var input=h("input",{type:"text",id:"tf-name",value:ui.draftName,placeholder:"z. B. Anna",
+    autocomplete:"off",oninput:function(e){ui.draftName=e.target.value;ui.nameError="";}});
+  card.appendChild(input);
+  if(ui.nameError) card.appendChild(h("p",{class:"field-error",text:ui.nameError}));
+
+  card.appendChild(h("p",{class:"hint",style:"margin-top:14px",
+    text:"Tippe die Tage an, an denen du KEINE Zeit hast — sie werden rot durchgestrichen."+
+      (P.months.length>2?" Mit den Knöpfen neben jedem Monat setzt du ganze Monate auf einmal.":"")}));
+  card.appendChild(h("div",{class:"legend"},
+    h("span",null,h("span",{class:"dot dot-free"}),"kann ich"),
+    h("span",null,h("span",{class:"dot dot-busy"}),"kann ich nicht")));
+
+  P.months.forEach(function(mo){
+    var wrap=h("div",{class:"month"});
+    var head=h("div",{class:"month-head"},h("b",{text:MONL[mo.m]+" "+mo.y}));
+    if(P.months.length>1){
+      head.appendChild(h("div",{class:"mini"},
+        h("button",{text:"alles grün",onclick:function(){
+          for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.delete(o); render();}}),
+        h("button",{text:"alles rot",onclick:function(){
+          for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.add(o); render();}})));
+    }
+    wrap.appendChild(head);
+    var cal=h("div",{class:"cal",role:"group","aria-label":"Kalender "+MONL[mo.m]+" "+mo.y});
+    ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach(function(w){cal.appendChild(h("div",{class:"cal-h",text:w}));});
+    var firstDow=(P.dateOf(mo.fromOff).getDay()+6)%7;
+    for(var b=0;b<firstDow;b++) cal.appendChild(h("div",{class:"day blank"}));
+    for(var o=mo.fromOff;o<=mo.toOff;o++){
+      (function(o){
+        var busy=ui.busy.has(o), dt=P.dateOf(o);
+        cal.appendChild(h("button",{
+          class:"day"+(busy?" busy":""),
+          "aria-pressed":busy?"true":"false",
+          "aria-label":dt.getDate()+". "+MONL[dt.getMonth()]+", "+(busy?"keine Zeit":"Zeit"),
+          onclick:function(){ if(ui.busy.has(o))ui.busy.delete(o);else ui.busy.add(o); render(); }
+        },String(dt.getDate())));
+      })(o);
+    }
+    wrap.appendChild(cal);
+    card.appendChild(wrap);
+  });
+
+  card.appendChild(h("div",{class:"quick"},
+    h("button",{class:"btn btn-ghost",text:"Alles auf grün",onclick:function(){ui.busy=new Set();render();}}),
+    h("button",{class:"btn btn-ghost",text:"Alles auf rot",onclick:function(){
+      ui.busy=new Set(); for(var i=0;i<P.N;i++)ui.busy.add(i); render();}})));
+
+  var saveBtn=h("button",{class:"btn btn-primary",text:ui.saving?"Wird gespeichert …":"Speichern",onclick:onSaveEntry});
+  var cancel=h("button",{class:"btn btn-ghost",text:"Abbrechen",onclick:function(){ui.mode="list";render();}});
+  if(ui.saving){saveBtn.disabled=true;cancel.disabled=true;}
+  card.appendChild(h("div",{class:"btn-row"},cancel,saveBtn));
+
+  if(ui.editingName){
+    var del=h("button",{class:"btn btn-danger",style:"width:100%;margin-top:10px",
+      text:ui.confirmDelete?"Wirklich löschen?":"Meinen Eintrag löschen",
+      onclick:function(){
+        if(!ui.confirmDelete){ui.confirmDelete=true;render();return;}
+        var name=ui.editingName;
+        var p=P.people.filter(function(x){return x.name===name;})[0];
+        if(!p){ui.mode="list";render();return;}
+        ui.saving=true; render();
+        dbDelete("/p/"+P.id+"/people/"+p.key).then(function(){
+          return refreshPlanner();
+        }).then(function(){
+          ui.saving=false; ui.mode="list"; ui.notice="Eintrag gelöscht."; render();
+        }).catch(function(){
+          ui.saving=false; ui.nameError="Löschen hat nicht geklappt — bitte nochmal versuchen."; render();
+        });
+      }});
+    if(ui.saving) del.disabled=true;
+    card.appendChild(del);
+  }
+  app.appendChild(card);
+}
+
+function keyFor(name){ return encodeURIComponent(name).replace(/\./g,"%2E"); }
+
+function onSaveEntry(){
+  var name=ui.draftName.trim().slice(0,40);
+  if(!name){ ui.nameError="Bitte gib zuerst deinen Namen ein."; render(); return; }
+  var taken=P.people.some(function(p){return p.name===name && p.name!==ui.editingName;});
+  if(taken){
+    ui.nameError="Diesen Namen gibt es schon. Wenn du das bist: geh zurück und tippe auf deinen Namen. Sonst nimm z. B. „"+name+" B.“";
+    render(); return;
+  }
+  if(!ui.editingName && P.people.length>=P.meta.cap){ ui.mode="full"; render(); return; }
+  var busy=Array.from(ui.busy).sort(function(a,b){return a-b;});
+  ui.saving=true; render();
+  var work=Promise.resolve();
+  if(ui.editingName && ui.editingName!==name){
+    var old=P.people.filter(function(x){return x.name===ui.editingName;})[0];
+    if(old) work=dbDelete("/p/"+P.id+"/people/"+old.key).catch(function(){});
+  }
+  work.then(function(){
+    return dbPut("/p/"+P.id+"/people/"+keyFor(name),{name:name,busy:encodeDays(busy)});
+  }).then(function(){
+    lsSet("passt-name-"+P.id,name);
+    if(!ui.editingName) track("join");
+    return refreshPlanner();
+  }).then(function(){
+    ui.saving=false; ui.mode="list";
+    ui.notice="Gespeichert! Alle anderen sehen deine Auswahl automatisch.";
+    render();
+    setTimeout(function(){ if(ui.notice){ui.notice="";if(ui.mode==="list")render();} },6000);
+  }).catch(function(){
+    ui.saving=false;
+    ui.nameError="Speichern hat nicht geklappt — prüfe deine Internetverbindung und tippe nochmal auf „Speichern“.";
+    render();
+  });
+}
+
+function changeNights(delta){
+  var n=P.meta.nights+delta;
+  if(n<1||n>7) return;
+  dbPut("/p/"+P.id+"/meta/nights",n).then(function(){return refreshPlanner();}).then(render).catch(function(){
+    ui.notice="Ändern hat nicht geklappt — bitte nochmal versuchen."; render();
+  });
+}
+
+function renderResults(app){
+  app.appendChild(h("h2",{text:"Mögliche Termine"}));
+  var Pn=P.people.length;
+  if(!Pn){
+    app.appendChild(h("p",{class:"empty",text:"Sobald sich die Ersten eingetragen haben, erscheinen hier die Termine, die passen."}));
+    return;
+  }
+  var slots=computeSlots();
+  var perfect=slots.filter(function(s){return s.can===Pn;});
+  var rest=slots.filter(function(s){return s.can<Pn;}).sort(function(a,b){
+    return b.can-a.can || b.wkd-a.wkd || a.s-b.s;
+  });
+  function slotCard(sl,isPerfect){
+    var left=h("div",null,
+      h("div",{class:"slot-date"},
+        fmt(sl.s)+" – "+fmt(sl.e),
+        sl.fullWeekend?h("span",{class:"tag",text:"Wochenende"}):null),
+      h("div",{class:"slot-sub",text:isPerfect?
+        (Pn===1?"Passt bisher":"Da können alle "+Pn):
+        "Nicht dabei: "+sl.cant.join(", ")}));
+    return h("div",{class:"slot"+(isPerfect?" perfect":"")},left,
+      h("span",{class:"pill",text:sl.can+"/"+Pn}));
+  }
+  if(perfect.length){
+    var sorted=perfect.slice().sort(function(a,b){
+      return (b.fullWeekend?1:0)-(a.fullWeekend?1:0) || a.s-b.s;
+    });
+    sorted.slice(0,6).forEach(function(sl){app.appendChild(slotCard(sl,true));});
+    if(sorted.length>6){
+      var det=h("details",null,h("summary",{text:(sorted.length-6)+" weitere Termine, die für alle passen"}));
+      sorted.slice(6,56).forEach(function(sl){det.appendChild(slotCard(sl,true));});
+      app.appendChild(det);
+    }
+  }else{
+    app.appendChild(h("p",{class:"hint",text:"Kein Termin passt für alle — das sind die besten Optionen:"}));
+    rest.slice(0,5).forEach(function(sl){app.appendChild(slotCard(sl,false));});
+    rest=rest.slice(5);
+  }
+  if(perfect.length&&rest.length){
+    var det2=h("details",null,h("summary",{text:"Termine anzeigen, die nicht für alle passen"}));
+    rest.filter(function(s){return s.can>0;}).slice(0,15).forEach(function(sl){det2.appendChild(slotCard(sl,false));});
+    app.appendChild(det2);
+  }
+}
+
+/* ================== Start ================== */
+route();
+})();
+</script>
+</body>
+</html>
