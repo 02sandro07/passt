@@ -308,6 +308,8 @@ function newId(){
   for(var i=0;i<10;i++) s+=a[r[i]%a.length];
   return s;
 }
+function formatCode(id){ return (id.toUpperCase().match(/.{1,5}/g)||[id]).join("-"); }
+function parseCode(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
 
 /* ================== Datenbank ================== */
 function dbGet(path){
@@ -381,10 +383,10 @@ function hasPro(){ return lsGet("passt-pro",false); }
 var view={name:"home"};
 function route(){
   var hs=location.hash.replace(/^#\/?/,"");
-  if(hs==="neu"){ view={name:"create"}; render(); }
-  else if(hs==="pro"){ view={name:"pro",from:view.name}; render(); }
+  if(hs==="neu"){ stopLive(); view={name:"create"}; render(); toTop(); }
+  else if(hs==="pro"){ stopLive(); view={name:"pro",from:view.name}; render(); toTop(); }
   else if(hs.indexOf("p/")===0){ openPlanner(hs.slice(2).split("?")[0]); }
-  else { view={name:"home"}; render(); stopLive(); }
+  else { stopLive(); view={name:"home"}; render(); toTop(); }
 }
 window.addEventListener("hashchange",route);
 
@@ -431,8 +433,9 @@ function applyPlanner(id,raw){
 
 var pendingShareNew=false;
 function openPlanner(id){
+  id=parseCode(id);
   view={name:"planner",id:id};
-  P=null; ui.mode="loading"; render();
+  P=null; ui.mode="loading"; render(); toTop();
   dbGet("/p/"+id).then(function(raw){
     applyPlanner(id,raw);
     if(!P.missing) rememberVisit();
@@ -513,8 +516,8 @@ function render(){
   else if(view.name==="create") renderCreate(app);
   else if(view.name==="pro") renderPro(app);
   else renderPlannerView(app);
-  window.scrollTo(0,0);
 }
+function toTop(){ window.scrollTo(0,0); }
 
 /* ---------- Startseite ---------- */
 function renderHome(app){
@@ -556,6 +559,22 @@ function renderHome(app){
     });
     app.appendChild(steps);
   }
+
+  app.appendChild(h("h2",{text:"Du hast einen Planer-Code?"}));
+  var codeCard=h("div",{class:"card"});
+  var codeErr=h("p",{class:"field-error",style:"display:none",text:""});
+  var codeInput=h("input",{type:"text",id:"home-code",placeholder:"z. B. QQKT8-EXW2E",autocomplete:"off",
+    style:"text-transform:uppercase"});
+  codeCard.appendChild(h("label",{for:"home-code",text:"Code eingeben"}));
+  codeCard.appendChild(codeInput);
+  codeCard.appendChild(codeErr);
+  codeCard.appendChild(h("button",{class:"btn btn-ghost",style:"width:100%;margin-top:10px",text:"Planer öffnen",onclick:function(){
+    var id=parseCode(codeInput.value);
+    if(id.length<6){ codeErr.textContent="Der Code hat mindestens 6 Zeichen — schau nochmal nach."; codeErr.style.display="block"; return; }
+    location.hash="#/p/"+id;
+  }}));
+  codeCard.appendChild(h("p",{class:"hint",style:"margin:8px 0 0",text:"Den Code findest du unten in jedem Planer — er führt immer zurück, auch ohne Link."}));
+  app.appendChild(codeCard);
 
   app.appendChild(h("div",{class:"footer"},
     h("span",null,"Passt. — made in Tirol"),
@@ -726,11 +745,14 @@ function renderShareNew(app){
   stack.appendChild(h("button",{class:"btn btn-primary",text:"Jetzt meine Tage eintragen",onclick:function(){
     ui.mode="edit"; openEditFor(null); }}));
   card.appendChild(stack);
+  card.appendChild(h("p",{class:"hint",style:"margin:14px 0 0",
+    text:"Dein Planer-Code: "+formatCode(P.id)+" — damit kommst du (und jeder aus der Gruppe) jederzeit wieder rein, auch ohne den Link."}));
   app.appendChild(card);
 }
 function shareURL(){ return location.href.split("#")[0]+"#/p/"+P.id; }
 function shareMessage(){
-  return "⛺ "+P.meta.title+" — wann passt's dir? Trag deine Tage hier ein (30 Sekunden, keine Anmeldung):\n"+shareURL();
+  return "⛺ "+P.meta.title+" — wann passt's dir? Trag deine Tage hier ein (30 Sekunden, keine Anmeldung):\n"+shareURL()+
+    "\nFalls der Link nicht aufgeht: Code "+formatCode(P.id)+" auf "+location.host+location.pathname+" eingeben.";
 }
 function copyLink(el){
   var url=shareURL();
@@ -759,7 +781,7 @@ function renderList(app){
   }
   var isIn=myName&&P.people.some(function(p){return p.name===myName;});
   app.appendChild(h("button",{class:"btn btn-primary",onclick:function(){
-    if(!isIn && P.people.length>=P.meta.cap){ ui.mode="full"; render(); return; }
+    if(!isIn && P.people.length>=P.meta.cap){ ui.mode="full"; render(); toTop(); return; }
     openEditFor(isIn?myName:null);
   },text:isIn?"Meine Tage ändern":"+ Ich trag mich ein"}));
 
@@ -778,7 +800,8 @@ function renderList(app){
       target:"_blank",rel:"noopener",text:"Link per WhatsApp teilen"})));
 
   app.appendChild(h("div",{class:"footer"},
-    h("a",{href:"#",text:"Erstellt mit Passt. — kostenlos eigenen Planer starten"})));
+    h("span",null,"Planer-Code: ",h("b",{style:"font-variant-numeric:tabular-nums",text:formatCode(P.id)})),
+    h("a",{href:"#",text:"Erstellt mit Passt."})));
 }
 
 function renderFull(app){
@@ -803,7 +826,7 @@ function openEditFor(name){
     ui.draftName=(remembered&&!P.people.some(function(p){return p.name===remembered;}))?remembered:"";
     ui.busy=new Set();
   }
-  render();
+  render(); toTop();
 }
 
 function renderEdit(app){
@@ -816,7 +839,7 @@ function renderEdit(app){
 
   card.appendChild(h("p",{class:"hint",style:"margin-top:14px",
     text:"Tippe die Tage an, an denen du KEINE Zeit hast — sie werden rot durchgestrichen."+
-      (P.months.length>2?" Mit den Knöpfen neben jedem Monat setzt du ganze Monate auf einmal.":"")}));
+      (P.months.length>1?" Mit den Knöpfen neben jedem Monat setzt du ganze Monate auf einmal.":"")}));
   card.appendChild(h("div",{class:"legend"},
     h("span",null,h("span",{class:"dot dot-free"}),"kann ich"),
     h("span",null,h("span",{class:"dot dot-busy"}),"kann ich nicht")));
@@ -827,9 +850,9 @@ function renderEdit(app){
     if(P.months.length>1){
       head.appendChild(h("div",{class:"mini"},
         h("button",{text:"alles grün",onclick:function(){
-          for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.delete(o); render();}}),
+          for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.delete(o); paintAllDays();}}),
         h("button",{text:"alles rot",onclick:function(){
-          for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.add(o); render();}})));
+          for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.add(o); paintAllDays();}})));
     }
     wrap.appendChild(head);
     var cal=h("div",{class:"cal",role:"group","aria-label":"Kalender "+MONL[mo.m]+" "+mo.y});
@@ -841,9 +864,13 @@ function renderEdit(app){
         var busy=ui.busy.has(o), dt=P.dateOf(o);
         cal.appendChild(h("button",{
           class:"day"+(busy?" busy":""),
+          "data-off":String(o),
           "aria-pressed":busy?"true":"false",
           "aria-label":dt.getDate()+". "+MONL[dt.getMonth()]+", "+(busy?"keine Zeit":"Zeit"),
-          onclick:function(){ if(ui.busy.has(o))ui.busy.delete(o);else ui.busy.add(o); render(); }
+          onclick:function(ev){
+            if(ui.busy.has(o)) ui.busy.delete(o); else ui.busy.add(o);
+            paintDay(ev.currentTarget,o); /* nur die Kachel neu — kein Scroll-Sprung */
+          }
         },String(dt.getDate())));
       })(o);
     }
@@ -852,9 +879,9 @@ function renderEdit(app){
   });
 
   card.appendChild(h("div",{class:"quick"},
-    h("button",{class:"btn btn-ghost",text:"Alles auf grün",onclick:function(){ui.busy=new Set();render();}}),
+    h("button",{class:"btn btn-ghost",text:"Alles auf grün",onclick:function(){ui.busy=new Set();paintAllDays();}}),
     h("button",{class:"btn btn-ghost",text:"Alles auf rot",onclick:function(){
-      ui.busy=new Set(); for(var i=0;i<P.N;i++)ui.busy.add(i); render();}})));
+      ui.busy=new Set(); for(var i=0;i<P.N;i++)ui.busy.add(i); paintAllDays();}})));
 
   var saveBtn=h("button",{class:"btn btn-primary",text:ui.saving?"Wird gespeichert …":"Speichern",onclick:onSaveEntry});
   var cancel=h("button",{class:"btn btn-ghost",text:"Abbrechen",onclick:function(){ui.mode="list";render();}});
@@ -873,7 +900,7 @@ function renderEdit(app){
         dbDelete("/p/"+P.id+"/people/"+p.key).then(function(){
           return refreshPlanner();
         }).then(function(){
-          ui.saving=false; ui.mode="list"; ui.notice="Eintrag gelöscht."; render();
+          ui.saving=false; ui.mode="list"; ui.notice="Eintrag gelöscht."; render(); toTop();
         }).catch(function(){
           ui.saving=false; ui.nameError="Löschen hat nicht geklappt — bitte nochmal versuchen."; render();
         });
@@ -882,6 +909,19 @@ function renderEdit(app){
     card.appendChild(del);
   }
   app.appendChild(card);
+}
+
+function paintDay(el,o){
+  var busy=ui.busy.has(o);
+  el.className="day"+(busy?" busy":"");
+  el.setAttribute("aria-pressed",busy?"true":"false");
+  var dt=P.dateOf(o);
+  el.setAttribute("aria-label",dt.getDate()+". "+MONL[dt.getMonth()]+", "+(busy?"keine Zeit":"Zeit"));
+}
+function paintAllDays(){
+  document.querySelectorAll(".day[data-off]").forEach(function(el){
+    paintDay(el,parseInt(el.getAttribute("data-off"),10));
+  });
 }
 
 function keyFor(name){ return encodeURIComponent(name).replace(/\./g,"%2E"); }
@@ -911,7 +951,7 @@ function onSaveEntry(){
   }).then(function(){
     ui.saving=false; ui.mode="list";
     ui.notice="Gespeichert! Alle anderen sehen deine Auswahl automatisch.";
-    render();
+    render(); toTop();
     setTimeout(function(){ if(ui.notice){ui.notice="";if(ui.mode==="list")render();} },6000);
   }).catch(function(){
     ui.saving=false;
