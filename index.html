@@ -151,6 +151,11 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 /* iOS: Datums-/Zeitfelder haben sonst eine eigene Mindestbreite und laufen rechts über */
 input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:46px;text-align:left}
 input::-webkit-date-and-time-value{text-align:left;min-height:1.5em}
+.dtwrap{position:relative;display:block;min-width:0}
+@supports (-webkit-touch-callout:none){
+  .dtwrap.empty::after{content:attr(data-ph);position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);opacity:.75;pointer-events:none;font-size:.95rem}
+}
+input::placeholder{text-transform:none}
 .field-error{color:var(--busy-ink);font-size:.88rem;margin:6px 0 0}
 .hint{color:var(--muted);font-size:.92rem;margin:4px 0 12px}
 .legend{display:flex;gap:14px;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
@@ -619,11 +624,9 @@ function renderCreate(app){
     oninput:function(e){draft.title=e.target.value;draft.err="";}}));
 
   card.appendChild(h("label",{for:"c-start",text:"Frühester Tag"}));
-  card.appendChild(h("input",{type:"date",id:"c-start",value:draft.start,min:todayStr(),
-    oninput:function(e){draft.start=e.target.value;draft.err="";}}));
+  card.appendChild(dateField(draft.start,{id:"c-start",min:todayStr()},function(e){draft.start=e.target.value;draft.err="";}));
   card.appendChild(h("label",{for:"c-end",text:"Spätester Tag"}));
-  card.appendChild(h("input",{type:"date",id:"c-end",value:draft.end,min:todayStr(),
-    oninput:function(e){draft.end=e.target.value;draft.err="";}}));
+  card.appendChild(dateField(draft.end,{id:"c-end",min:todayStr()},function(e){draft.end=e.target.value;draft.err="";}));
 
   card.appendChild(h("label",{text:"Wie lange dauert es?"}));
   var minus=h("button",{text:"−",onclick:function(){if(draft.nights>0){draft.nights--;render();}},"aria-label":"Kürzer"});
@@ -641,6 +644,12 @@ function renderCreate(app){
   app.appendChild(card);
 }
 
+function dateField(value,attrs,onv){
+  var a={type:"date",value:value}; for(var k in attrs) a[k]=attrs[k];
+  var inp=h("input",a), w=h("span",{class:"dtwrap"+(value?"":" empty"),"data-ph":"Datum wählen"},inp);
+  inp.addEventListener("input",function(e){ w.classList.toggle("empty",!e.target.value); onv(e); });
+  return w;
+}
 function onCreate(){
   var title=draft.title.trim().slice(0,60);
   if(!title){ draft.err="Gib dem Planer einen Namen — z. B. „Skiwochenende“."; render(); return; }
