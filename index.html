@@ -413,7 +413,7 @@ function applyPlanner(id,raw){
   var meta={
     title:String(raw.meta.title||"Unser Termin").slice(0,60),
     start:raw.meta.start,end:raw.meta.end,
-    nights:Math.min(7,Math.max(1,parseInt(raw.meta.nights,10)||2)),
+    nights:(function(v){return isNaN(v)?2:Math.min(7,Math.max(0,v));})(parseInt(raw.meta.nights,10)),
     cap:raw.meta.cap==="pro"?PRO_MAX_PEOPLE:FREE_MAX_PEOPLE
   };
   var cal=buildCalendarInfo(meta);
@@ -491,6 +491,10 @@ function startPolling(id){
 }
 
 /* ================== Fenster-Berechnung ================== */
+function durLabel(n){
+  if(n===0) return "1 Tag";
+  return n+(n===1?" Nacht":" Nächte")+" · "+(n+1)+" Tage";
+}
 function computeSlots(){
   var len=P.meta.nights+1,out=[];
   for(var s=0;s+len-1<P.N;s++){
@@ -501,7 +505,7 @@ function computeSlots(){
     var sat=days.some(function(d){return P.dateOf(d).getDay()===6;});
     var sun=days.some(function(d){return P.dateOf(d).getDay()===0;});
     out.push({s:s,e:s+len-1,cant:cant,can:P.people.length-cant.length,
-      fullWeekend:sat&&sun,
+      fullWeekend:len===1?(sat||sun):(sat&&sun),
       wkd:days.filter(function(d){var g=P.dateOf(d).getDay();return g===0||g===6;}).length});
   }
   return out;
@@ -532,7 +536,7 @@ function renderHome(app){
     h("span",{class:"tile",text:"18"})));
 
   app.appendChild(h("h1",{text:"Findet den Termin, der allen passt."}));
-  app.appendChild(h("p",{class:"sub",text:"Für Wochenendtrips, Urlaube und alles, was mehrere Tage dauert: Link in die Gruppe schicken, jeder streicht die Tage, an denen er nicht kann — Passt. rechnet live aus, welche Zeitfenster für alle funktionieren. Ohne Anmeldung, ohne App-Zwang."}));
+  app.appendChild(h("p",{class:"sub",text:"Für Grillabende, Ausflüge, Wochenendtrips und Urlaube — ob ein Tag oder mehrere: Link in die Gruppe schicken, jeder streicht die Tage, an denen er nicht kann — Passt. rechnet live aus, welche Zeitfenster für alle funktionieren. Ohne Anmeldung, ohne App-Zwang."}));
 
   app.appendChild(h("a",{class:"btn btn-primary",href:"#/neu",text:"Neuen Planer erstellen"}));
 
@@ -553,7 +557,7 @@ function renderHome(app){
     [["Planer erstellen","Titel, Zeitraum und Dauer festlegen — dauert 30 Sekunden."],
      ["Link in die Gruppe schicken","WhatsApp genügt. Niemand muss etwas installieren oder sich anmelden."],
      ["Tage streichen","Jeder tippt die Tage an, an denen er nicht kann."],
-     ["Termin ablesen","Passt. zeigt live alle Zeitfenster, die für alle passen — Wochenenden zuerst."]
+     ["Termin ablesen","Passt. zeigt live alle Tage bzw. Zeitfenster, die für alle passen — Wochenenden zuerst."]
     ].forEach(function(s){
       steps.appendChild(h("li",null,h("span",null,h("b",{text:s[0]})," — "+s[1])));
     });
@@ -618,11 +622,11 @@ function renderCreate(app){
   card.appendChild(h("input",{type:"date",id:"c-end",value:draft.end,min:todayStr(),
     oninput:function(e){draft.end=e.target.value;draft.err="";}}));
 
-  card.appendChild(h("label",{text:"Wie lange fahrt ihr?"}));
-  var minus=h("button",{text:"−",onclick:function(){if(draft.nights>1){draft.nights--;render();}},"aria-label":"Eine Nacht weniger"});
-  var plus=h("button",{text:"+",onclick:function(){if(draft.nights<7){draft.nights++;render();}},"aria-label":"Eine Nacht mehr"});
+  card.appendChild(h("label",{text:"Wie lange dauert es?"}));
+  var minus=h("button",{text:"−",onclick:function(){if(draft.nights>0){draft.nights--;render();}},"aria-label":"Kürzer"});
+  var plus=h("button",{text:"+",onclick:function(){if(draft.nights<7){draft.nights++;render();}},"aria-label":"Länger"});
   card.appendChild(h("div",{class:"stepper"},minus,
-    h("b",{text:draft.nights+" Nächte · "+(draft.nights+1)+" Tage"}),plus));
+    h("b",{text:durLabel(draft.nights)}),plus));
   card.appendChild(h("p",{class:"hint",style:"margin-top:6px",text:"Lässt sich später jederzeit ändern."}));
 
   if(draft.err) card.appendChild(h("p",{class:"field-error",text:draft.err}));
@@ -640,7 +644,7 @@ function onCreate(){
   if(!draft.start||!draft.end){ draft.err="Bitte wähle den Zeitraum (frühester und spätester Tag)."; render(); return; }
   var s=parseDate(draft.start), e=parseDate(draft.end);
   var days=Math.round((e-s)/86400000)+1;
-  if(days<draft.nights+1){ draft.err="Der Zeitraum ist kürzer als die Reisedauer."; render(); return; }
+  if(days<draft.nights+1){ draft.err="Der Zeitraum ist kürzer als die gewählte Dauer."; render(); return; }
   if(days>MAX_RANGE_DAYS){ draft.err="Der Zeitraum ist sehr lang — bitte maximal ein Jahr."; render(); return; }
   ui.saving=true; render();
   var id=newId();
@@ -713,7 +717,7 @@ function renderPlannerView(app){
     return;
   }
 
-  app.appendChild(h("p",{class:"eyebrow",text:rangeLabel()+" · "+P.meta.nights+" Nächte · "+(P.meta.nights+1)+" Tage"}));
+  app.appendChild(h("p",{class:"eyebrow",text:rangeLabel()+" · "+durLabel(P.meta.nights)}));
   app.appendChild(h("h1",{text:P.meta.title}));
 
   if(ui.mode==="share-new"){ renderShareNew(app); return; }
@@ -787,12 +791,12 @@ function renderList(app){
 
   renderResults(app);
 
-  var minus=h("button",{text:"−",onclick:function(){changeNights(-1);},"aria-label":"Eine Nacht weniger"});
-  var plus=h("button",{text:"+",onclick:function(){changeNights(1);},"aria-label":"Eine Nacht mehr"});
+  var minus=h("button",{text:"−",onclick:function(){changeNights(-1);},"aria-label":"Kürzer"});
+  var plus=h("button",{text:"+",onclick:function(){changeNights(1);},"aria-label":"Länger"});
   app.appendChild(h("div",{class:"settings"},
-    h("span",{text:"Wie lange fahrt ihr?"}),
+    h("span",{text:"Wie lange dauert es?"}),
     h("div",{class:"stepper"},minus,
-      h("b",{text:P.meta.nights+" Nächte · "+(P.meta.nights+1)+" Tage"}),plus)));
+      h("b",{text:durLabel(P.meta.nights)}),plus)));
 
   app.appendChild(h("div",{class:"stack"},
     h("a",{class:"btn btn-ghost",
@@ -962,7 +966,7 @@ function onSaveEntry(){
 
 function changeNights(delta){
   var n=P.meta.nights+delta;
-  if(n<1||n>7) return;
+  if(n<0||n>7) return;
   dbPut("/p/"+P.id+"/meta/nights",n).then(function(){return refreshPlanner();}).then(render).catch(function(){
     ui.notice="Ändern hat nicht geklappt — bitte nochmal versuchen."; render();
   });
@@ -983,7 +987,7 @@ function renderResults(app){
   function slotCard(sl,isPerfect){
     var left=h("div",null,
       h("div",{class:"slot-date"},
-        fmt(sl.s)+" – "+fmt(sl.e),
+        sl.s===sl.e?fmt(sl.s):fmt(sl.s)+" – "+fmt(sl.e),
         sl.fullWeekend?h("span",{class:"tag",text:"Wochenende"}):null),
       h("div",{class:"slot-sub",text:isPerfect?
         (Pn===1?"Passt bisher":"Da können alle "+Pn):
