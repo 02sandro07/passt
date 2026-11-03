@@ -148,6 +148,9 @@ input[type=text],input[type=date]{
   color:var(--ink);font:inherit;padding:11px 12px;
 }
 input:focus{outline:2px solid var(--accent);outline-offset:1px}
+/* iOS: Datums-/Zeitfelder haben sonst eine eigene Mindestbreite und laufen rechts über */
+input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:46px;text-align:left}
+input::-webkit-date-and-time-value{text-align:left;min-height:1.5em}
 .field-error{color:var(--busy-ink);font-size:.88rem;margin:6px 0 0}
 .hint{color:var(--muted);font-size:.92rem;margin:4px 0 12px}
 .legend{display:flex;gap:14px;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
