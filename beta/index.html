@@ -1114,7 +1114,7 @@ function goPreise(f){ location.hash="#/preise?f="+f; }
 function renderList(app){
   var fi=fixedInfo();
   if(fi) renderHero(app,fi);
-  if(P.meta.trial&&isAdmin()&&!fi) app.appendChild(h("p",{class:"hint"},tierBadge("genau")," Probe: Dein erster Planer hat alle Funktionen von Passt genau."));
+  if(P.meta.trial&&isAdmin()&&!fi) app.appendChild(h("p",{class:"hint",text:"🎁 Probe: Dein erster Planer hat alle Funktionen von Passt genau. — gratis."}));
   if(!fi) app.appendChild(h("p",{class:"sub",text:P.meta.kind==="umfrage"?"Stimm kurz ab — alle sehen sofort, welcher Termin vorne liegt.":"Trag dich kurz ein — alle sehen sofort, welche Termine passen."}));
   if(ui.live) app.appendChild(h("p",{class:"live"},h("span",{class:"dot-live"}),"live — Änderungen erscheinen sofort"));
 
@@ -1303,7 +1303,7 @@ function resultsBlock(Pn,admin){
     var sorted=perfect.slice().sort(function(a,b){return (b.fullWeekend?1:0)-(a.fullWeekend?1:0)||a.s-b.s;});
     sorted.slice(0,6).forEach(function(sl){wrap.appendChild(slotCard(sl,true));});
     if(sorted.length>6){
-      var det=h("details",null,h("summary",{text:(sorted.length-6)+" weitere Termine, die für alle passen"}));
+      var det=h("details",null,h("summary",{text:(sorted.length-6===1?"1 weiterer Termin, der":(sorted.length-6)+" weitere Termine, die")+" für alle passt"+(sorted.length-6===1?"":"en")}));
       sorted.slice(6,56).forEach(function(sl){det.appendChild(slotCard(sl,true));});
       wrap.appendChild(det);
     }

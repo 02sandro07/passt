@@ -1013,7 +1013,7 @@ function renderResults(app){
     });
     sorted.slice(0,6).forEach(function(sl){app.appendChild(slotCard(sl,true));});
     if(sorted.length>6){
-      var det=h("details",null,h("summary",{text:(sorted.length-6)+" weitere Termine, die für alle passen"}));
+      var det=h("details",null,h("summary",{text:(sorted.length-6===1?"1 weiterer Termin, der für alle passt":(sorted.length-6)+" weitere Termine, die für alle passen")}));
       sorted.slice(6,56).forEach(function(sl){det.appendChild(slotCard(sl,true));});
       app.appendChild(det);
     }
