@@ -721,7 +721,8 @@ function buildICS(){
 function addToCalendar(){
   var ics=buildICS(); if(!ics) return;
   track("calendar");
-  if(isApp()&&nativeSend({cmd:"calendar",ics:ics,name:P.meta.title})) return;
+  var fi=fixedInfo();
+  if(isApp()&&nativeSend({cmd:"calendar",ics:ics,name:P.meta.title,start:ds(fi.start),end:ds(fi.end),time:fi.time||"",url:shareURL()})) return;
   var blob=new Blob([ics],{type:"text/calendar"}), a=document.createElement("a");
   a.href=URL.createObjectURL(blob); a.download=P.meta.title.replace(/[^\wäöüÄÖÜß -]/g,"")+".ics";
   document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
