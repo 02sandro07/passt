@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Passt. trägt den fixierten Termin in deinen Kalender ein.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Passt. trägt den fixierten Termin in deinen Kalender ein.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Wird nur für Orts-Vorschläge im Kalender-Dialog verwendet.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
