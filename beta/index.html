@@ -1,0 +1,1547 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passt. Beta</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Passt. findet den Termin, der allen passt: Link teilen, Tage streichen, fertig. Ohne Anmeldung, ohne App-Zwang.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232E6B4E'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Georgia' font-weight='bold' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{
+  --bg:#F4F6F1;
+  --card:#FFFFFF;
+  --ink:#1E2A22;
+  --muted:#5C6B60;
+  --line:#DDE4DA;
+  --accent:#2E6B4E;
+  --accent-deep:#1E4A36;
+  --accent-ink:#FFFFFF;
+  --free-bg:#DFF0E4;
+  --free-ink:#1F5C3D;
+  --free-line:#B9DCC6;
+  --busy-bg:#F6DCD7;
+  --busy-ink:#8C3B32;
+  --busy-line:#E6BBB3;
+  --gold:#9A6E1F;
+  --gold-bg:#F5EBD2;
+  --gold-line:#D9BC7A;
+  --wa:#1FAF57;
+  --wa-ink:#FFFFFF;
+  --shadow:0 1px 2px rgba(30,42,34,.06),0 4px 14px rgba(30,42,34,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A15;
+    --card:#1C241E;
+    --ink:#E7EEE7;
+    --muted:#9AA89D;
+    --line:#2C362E;
+    --accent:#6FBF92;
+    --accent-deep:#8FD3AF;
+    --accent-ink:#0F1F16;
+    --free-bg:#1E3B2B;
+    --free-ink:#A5DDBC;
+    --free-line:#2E5940;
+    --busy-bg:#43261F;
+    --busy-ink:#EBA89C;
+    --busy-line:#5F352C;
+    --gold:#DDB25F;
+    --gold-bg:#33290F;
+    --gold-line:#6E5827;
+    --wa:#2BC46A;
+    --wa-ink:#0E1F14;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A15;
+  --card:#1C241E;
+  --ink:#E7EEE7;
+  --muted:#9AA89D;
+  --line:#2C362E;
+  --accent:#6FBF92;
+  --accent-deep:#8FD3AF;
+  --accent-ink:#0F1F16;
+  --free-bg:#1E3B2B;
+  --free-ink:#A5DDBC;
+  --free-line:#2E5940;
+  --busy-bg:#43261F;
+  --busy-ink:#EBA89C;
+  --busy-line:#5F352C;
+  --gold:#DDB25F;
+  --gold-bg:#33290F;
+  --gold-line:#6E5827;
+  --wa:#2BC46A;
+  --wa-ink:#0E1F14;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.5;
+  -webkit-tap-highlight-color:transparent;
+}
+#app{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+.brand{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-weight:700;color:var(--accent);text-decoration:none;
+}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin:0 0 22px}
+.topbar .brand{font-size:1.35rem}
+.topbar a.mini{color:var(--muted);font-size:.88rem;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.eyebrow{
+  font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;margin:0 0 4px;
+}
+h1{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-weight:700;font-size:1.9rem;line-height:1.12;margin:0 0 8px;text-wrap:balance;
+}
+.sub{color:var(--muted);margin:0 0 20px;font-size:.97rem}
+h2{
+  font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  font-weight:600;font-size:1.12rem;margin:26px 0 10px;
+}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:16px;box-shadow:var(--shadow);
+}
+.notice{
+  background:var(--gold-bg);color:var(--ink);border:1px solid var(--gold-line);
+  border-radius:10px;padding:10px 12px;margin:0 0 16px;font-size:.92rem;
+}
+.live{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.82rem;margin:0 0 4px}
+.live .dot-live{width:8px;height:8px;border-radius:50%;background:var(--wa);display:inline-block}
+.people{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:8px 14px;font-size:.95rem;font-weight:500;color:var(--ink);
+  cursor:pointer;font-family:inherit;
+}
+.chip.me{border-color:var(--accent)}
+.chip small{color:var(--muted);font-weight:400}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:12px;padding:13px 20px;font-size:1rem;font-weight:600;
+  font-family:inherit;cursor:pointer;text-decoration:none;color:inherit;
+}
+.btn:focus-visible,.chip:focus-visible,.day:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:var(--accent-ink);width:100%}
+.btn-wa{background:var(--wa);color:var(--wa-ink);width:100%;font-size:1.02rem}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn-danger{background:transparent;color:var(--busy-ink);border:1px solid var(--busy-line)}
+.btn-row{display:flex;gap:10px;margin-top:14px}
+.btn-row .btn{flex:1}
+.btn[disabled]{opacity:.55;cursor:default}
+.stack{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
+label:first-child{margin-top:0}
+input[type=text],input[type=date]{
+  width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);
+  color:var(--ink);font:inherit;padding:11px 12px;
+}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.field-error{color:var(--busy-ink);font-size:.88rem;margin:6px 0 0}
+.hint{color:var(--muted);font-size:.92rem;margin:4px 0 12px}
+.legend{display:flex;gap:14px;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:14px;height:14px;border-radius:4px;display:inline-block}
+.dot-free{background:var(--free-bg);border:1px solid var(--free-line)}
+.dot-busy{background:var(--busy-bg);border:1px solid var(--busy-line)}
+.month{margin:18px 0 0}
+.month-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.month-head b{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:600;font-size:1rem}
+.month-head .mini{display:flex;gap:6px}
+.mini button{
+  border:1px solid var(--line);background:transparent;color:var(--muted);
+  border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:500;
+  cursor:pointer;font-family:inherit;
+}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-h{
+  text-align:center;font-size:.75rem;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.04em;padding:2px 0;
+}
+.day{
+  aspect-ratio:1/1;border-radius:10px;border:1px solid var(--free-line);
+  background:var(--free-bg);color:var(--free-ink);
+  font:inherit;font-weight:600;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;
+}
+.day.busy{
+  background:var(--busy-bg);border-color:var(--busy-line);color:var(--busy-ink);
+  text-decoration:line-through;font-weight:400;
+}
+.day.blank{visibility:hidden}
+.quick{display:flex;gap:8px;margin:12px 0 0}
+.quick .btn{flex:1;padding:9px 8px;font-size:.85rem;font-weight:500}
+.slot{
+  display:flex;align-items:center;gap:12px;justify-content:space-between;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;margin:0 0 8px;box-shadow:var(--shadow);
+}
+.slot.perfect{border-color:var(--free-line);background:var(--free-bg)}
+.slot-date{font-weight:600}
+.slot.perfect .slot-date{color:var(--free-ink)}
+.slot-sub{font-size:.85rem;color:var(--muted);margin-top:1px}
+.slot.perfect .slot-sub{color:var(--free-ink);opacity:.85}
+.pill{
+  flex-shrink:0;border-radius:999px;padding:4px 11px;font-size:.85rem;font-weight:600;
+  font-variant-numeric:tabular-nums;background:var(--bg);color:var(--muted);
+  border:1px solid var(--line);
+}
+.slot.perfect .pill{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tag{
+  display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--gold);margin-left:8px;
+}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:.92rem;padding:6px 2px}
+.settings{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:30px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.92rem;
+}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:1.1rem;font-weight:600;
+  cursor:pointer;font-family:inherit;
+}
+.stepper b{min-width:118px;text-align:center;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);font-size:.95rem}
+.tiles{display:flex;gap:6px;margin:0 0 22px}
+.tile{
+  width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:.95rem;background:var(--free-bg);color:var(--free-ink);
+  border:1px solid var(--free-line);font-variant-numeric:tabular-nums;
+}
+.tile.x{background:var(--busy-bg);color:var(--busy-ink);border-color:var(--busy-line);text-decoration:line-through;font-weight:400}
+.tile.win{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.mylist{display:flex;flex-direction:column;gap:8px;margin:10px 0 0}
+.mylist a{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);
+}
+.mylist a b{font-weight:600}
+.mylist a span{color:var(--muted);font-size:.85rem}
+.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+.steps li{
+  counter-increment:s;display:flex;gap:12px;align-items:baseline;margin:10px 0;color:var(--muted);
+}
+.steps li::before{
+  content:counter(s);flex-shrink:0;width:26px;height:26px;border-radius:50%;
+  background:var(--free-bg);color:var(--free-ink);border:1px solid var(--free-line);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:600;transform:translateY(4px);
+}
+.steps li b{color:var(--ink)}
+.prolist{margin:10px 0;padding-left:0;list-style:none}
+.prolist li{margin:8px 0;padding-left:26px;position:relative;font-size:.95rem}
+.prolist li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700}
+.footer{
+  margin-top:36px;padding-top:14px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.82rem;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+.footer a{color:var(--muted)}
+.copied{color:var(--free-ink);font-size:.9rem;font-weight:600;text-align:center;min-height:1.4em;margin:6px 0 0}
+.share-title{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:700;font-size:1.35rem;margin:0 0 8px}
+@media (prefers-reduced-motion: no-preference){
+  .day,.chip,.btn{transition:background .12s,border-color .12s,color .12s}
+}
+/* ================== Beta-Erweiterungen ================== */
+.betabar{display:flex;justify-content:center;gap:8px;font-size:.78rem;color:var(--gold);background:var(--gold-bg);
+  border:1px solid var(--gold-line);border-radius:999px;padding:5px 12px;margin:0 auto 16px;width:max-content;max-width:100%;text-align:center}
+.betabar a{color:var(--gold);font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+  border-radius:999px;padding:3px 9px;border:1px solid var(--line);color:var(--muted);background:var(--card);white-space:nowrap}
+.badge.genau{color:var(--accent-deep);border-color:var(--free-line);background:var(--free-bg)}
+.badge.alle{color:var(--gold);border-color:var(--gold-line);background:var(--gold-bg)}
+.lock{font-size:.7rem;font-weight:700;color:var(--gold);border:1px solid var(--gold-line);background:var(--gold-bg);
+  border-radius:999px;padding:2px 7px;margin-left:6px;white-space:nowrap}
+.hero{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:18px 18px 16px;margin:4px 0 14px;box-shadow:var(--shadow)}
+.hero .k{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;opacity:.85}
+.hero .when{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;font-weight:700;font-size:1.35rem;line-height:1.2;margin:4px 0 10px}
+.hero .count{display:flex;align-items:baseline;gap:8px;margin:0 0 12px}
+.hero .count b{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;font-size:3rem;line-height:1;font-variant-numeric:tabular-nums}
+.hero .count span{font-size:1rem;opacity:.9}
+.hero .btn{background:var(--accent-ink);color:var(--accent);width:100%;padding:11px 14px}
+.hero .btn.sec{background:transparent;color:var(--accent-ink);border:1px solid currentColor;opacity:.92}
+.hero .row{display:flex;gap:8px;margin-top:8px}
+.hero .row .btn{flex:1}
+.timeline{list-style:none;margin:6px 0 0;padding:0 0 0 14px;border-left:2px solid var(--free-line)}
+.timeline li{position:relative;margin:0 0 10px;padding-left:6px}
+.timeline li::before{content:"";position:absolute;left:-21px;top:6px;width:12px;height:12px;border-radius:50%;
+  background:var(--card);border:2px solid var(--accent)}
+.timeline li.now::before{background:var(--accent)}
+.timeline b{font-weight:600}
+.timeline span{display:block;color:var(--muted);font-size:.85rem}
+.tri{display:flex;gap:6px;margin-top:8px}
+.tri button{flex:1;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:9px;
+  padding:8px 4px;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer}
+.tri button.on-y{background:var(--free-bg);border-color:var(--free-line);color:var(--free-ink)}
+.tri button.on-m{background:var(--gold-bg);border-color:var(--gold-line);color:var(--gold)}
+.tri button.on-n{background:var(--busy-bg);border-color:var(--busy-line);color:var(--busy-ink)}
+.opt{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 8px;box-shadow:var(--shadow)}
+.opt.best{border-color:var(--accent)}
+.opt-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.opt-head b{font-weight:600}
+.opt-sub{color:var(--muted);font-size:.84rem;margin-top:2px}
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:8px;display:flex}
+.bar i{display:block;height:100%}
+.bar i.y{background:var(--accent)} .bar i.m{background:var(--gold-line)}
+.slot .act{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.linkbtn{background:none;border:none;color:var(--accent);font:inherit;font-size:.84rem;font-weight:600;cursor:pointer;padding:2px 0;text-decoration:underline;text-underline-offset:3px}
+.tiers{display:flex;flex-direction:column;gap:12px;margin:8px 0 0}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.tier.genau{border:2px solid var(--accent)}
+.tier.alle{border:2px solid var(--gold-line)}
+.tier h3{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;font-size:1.3rem;margin:2px 0 2px}
+.tier .price{font-weight:600;color:var(--muted);font-size:.92rem}
+.tier .price s{opacity:.7;margin-left:4px}
+.tier .yours{float:right}
+.check-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin:0 0 8px;cursor:pointer}
+.check-row input{width:20px;height:20px;accent-color:var(--accent)}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:none;background:transparent;border-radius:9px;padding:9px 6px;font:inherit;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.optrow{display:flex;gap:6px;align-items:center;margin:0 0 8px}
+.optrow input[type=date]{flex:1.4}
+.optrow input[type=time]{flex:1;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;padding:10px 8px}
+.optrow button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:10px;width:40px;height:44px;cursor:pointer;font-size:1.1rem}
+select{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;padding:11px 12px}
+.modal-bg{position:fixed;inset:0;background:rgba(10,20,14,.45);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:16px}
+.modal{background:var(--card);color:var(--ink);border-radius:18px;padding:20px;max-width:440px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.modal h3{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;font-size:1.25rem;margin:0 0 6px}
+.giftcode{font-family:ui-monospace,Menlo,monospace;font-size:1.4rem;font-weight:700;letter-spacing:.06em;text-align:center;
+  background:var(--free-bg);color:var(--free-ink);border:1px dashed var(--free-line);border-radius:12px;padding:12px;margin:10px 0}
+.rsvp{display:flex;gap:8px;margin-top:10px}
+.rsvp .btn{flex:1;padding:10px}
+.meta-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 6px}
+.grp{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);margin:0 0 8px}
+.grp b{font-weight:600}.grp span{display:block;color:var(--muted);font-size:.84rem}
+.grp a{white-space:nowrap;font-size:.86rem;font-weight:600;color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+"use strict";
+
+/* ================== Konfiguration ================== */
+var DB_URL="https://terminfinder-5b9bf-default-rtdb.europe-west1.firebasedatabase.app";
+var ROOT="passt";
+var BETA=true;                       /* Beta: Käufe werden simuliert */
+var FOUNDER_UNTIL="2027-03-31";
+var MAX_RANGE_DAYS=370;
+var TIERS={
+  scho: {name:"Passt scho.", cap:8},
+  genau:{name:"Passt genau.",cap:25},
+  alle: {name:"Passt für alle.",cap:200}
+};
+var RANK={scho:0,genau:1,alle:2};
+var PRODUCTS={
+  passt_genau:{label:"Passt genau.",price:"4,99 €",founder:"2,99 €"},
+  passt_genau_geschenk:{label:"Passt genau. als Geschenk",price:"4,99 €"},
+  passt_alle_event:{label:"Passt für alle. — Event-Pass",price:"9,99 €"},
+  passt_alle_verein:{label:"Passt für alle. — Verein (12 Monate)",price:"39 €"}
+};
+
+var WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
+var MON=["Jän.","Feb.","März","Apr.","Mai","Juni","Juli","Aug.","Sep.","Okt.","Nov.","Dez."];
+var MONL=["Jänner","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+var VLBL={y:"Ja",m:"Wenn's sein muss",n:"Nein"};
+
+/* ================== Hilfen ================== */
+function h(tag,attrs){
+  var el=document.createElement(tag);
+  if(attrs) for(var k in attrs){
+    if(attrs[k]==null) continue;
+    if(k==="text") el.textContent=attrs[k];
+    else if(k==="onclick") el.addEventListener("click",attrs[k]);
+    else if(k==="oninput") el.addEventListener("input",attrs[k]);
+    else if(k==="onchange") el.addEventListener("change",attrs[k]);
+    else el.setAttribute(k,attrs[k]);
+  }
+  for(var i=2;i<arguments.length;i++){
+    var c=arguments[i];
+    if(c!=null) el.appendChild(typeof c==="string"?document.createTextNode(c):c);
+  }
+  return el;
+}
+function lsGet(k,fb){ try{ var v=localStorage.getItem(k); return v===null?fb:JSON.parse(v); }catch(e){ return fb; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+function ds(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function todayStr(){ return ds(new Date()); }
+function parseDate(s){ var m=(s||"").split("-"); return new Date(+m[0],+m[1]-1,+m[2]); }
+function daysUntil(d){ var t=parseDate(todayStr()); return Math.round((parseDate(ds(d))-t)/86400000); }
+function newId(){
+  var a="abcdefghjkmnpqrstuvwxyz23456789",s="";
+  var r=new Uint32Array(10);
+  (window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(r):r.forEach(function(_,i){r[i]=Math.random()*1e9;});
+  for(var i=0;i<10;i++) s+=a[r[i]%a.length];
+  return s;
+}
+function formatCode(id){ return (id.toUpperCase().match(/.{1,5}/g)||[id]).join("-"); }
+function parseCode(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function dLong(d){ return WD[d.getDay()]+" "+d.getDate()+". "+MON[d.getMonth()]+" "+d.getFullYear(); }
+function dShort(d){ return WD[d.getDay()]+" "+d.getDate()+". "+MON[d.getMonth()]; }
+function monthYear(s){ var d=parseDate(s); return MONL[d.getMonth()]+" "+d.getFullYear(); }
+var DEVICE=lsGet("passt-device",null);
+if(!DEVICE){ DEVICE="dev-"+newId(); lsSet("passt-device",DEVICE); }
+
+/* ================== Kauf & Stufen (Gerät) ================== */
+function myTier(){
+  var t=lsGet("passt-tier",null);
+  if(!t && lsGet("passt-pro",false)) t="genau";      /* Alt-Kauf aus v1 */
+  return TIERS[t]?t:"scho";
+}
+function setTier(t){ if(RANK[t]>RANK[myTier()]) lsSet("passt-tier",t); }
+function eventCredits(){ return lsGet("passt-event-credits",0); }
+function trialUsed(){ return lsGet("passt-trial-used",false); }
+function founderActive(){ return todayStr()<=FOUNDER_UNTIL; }
+function genauPrice(){ return founderActive()?PRODUCTS.passt_genau.founder:PRODUCTS.passt_genau.price; }
+
+/* ---------- Native Brücke (App-Hülle) ---------- */
+var native=window.PasstNative||null;
+var nativeInfo=null, pendingBuy=null;
+function nativeSend(o){ try{ native.postMessage(JSON.stringify(o)); return true; }catch(e){ return false; } }
+window.onPasstNative=function(msg){
+  if(typeof msg==="string"){ try{msg=JSON.parse(msg);}catch(e){return;} }
+  if(!msg) return;
+  if(msg.cmd==="status"){ nativeInfo=msg; render(); }
+  else if(msg.cmd==="bought"){ var cb=pendingBuy; pendingBuy=null; grant(msg.product,cb); }
+  else if(msg.cmd==="buy-cancel"){ pendingBuy=null; }
+  else if(msg.cmd==="toast"){ toast(msg.text); }
+};
+function isApp(){ return !!native; }
+
+function buy(product,after){
+  if(isApp()){ pendingBuy=after||null; nativeSend({cmd:"buy",product:product,beta:BETA}); return; }
+  var p=PRODUCTS[product];
+  var price=product==="passt_genau"?genauPrice():p.price;
+  modal(function(box,close){
+    box.appendChild(h("h3",{text:p.label}));
+    box.appendChild(h("p",{class:"hint",style:"margin:0 0 12px",text:
+      BETA?"Beta-Testkauf über "+price+" — es wird nichts berechnet. Im echten Betrieb läuft der Kauf über App Store bzw. Google Play.":
+      "Käufe gibt es in der Passt.-App für iPhone und Android."}));
+    box.appendChild(h("div",{class:"stack"},
+      h("button",{class:"btn btn-primary",text:"Testkauf abschließen · "+price,onclick:function(){ close(); grant(product,after); }}),
+      h("button",{class:"btn btn-ghost",text:"Abbrechen",onclick:close})));
+  });
+}
+function grant(product,after){
+  track("buy",product);
+  if(product==="passt_genau"){ setTier("genau"); toast("Passt genau. ist freigeschaltet!"); }
+  else if(product==="passt_alle_verein"){ setTier("alle"); lsSet("passt-verein-until",ds(new Date(Date.now()+365*864e5))); toast("Passt für alle. — Verein ist freigeschaltet!"); }
+  else if(product==="passt_alle_event"){ lsSet("passt-event-credits",eventCredits()+1); toast("Event-Pass gutgeschrieben."); }
+  else if(product==="passt_genau_geschenk"){ createGift(); return; }
+  if(after) after(); else render();
+}
+function createGift(){
+  var code=newId();
+  dbPut("/p/"+code,{gift:{tier:"genau",created:todayStr(),used:false}}).then(function(){
+    var mine=lsGet("passt-gifts",[]); mine.unshift({code:code,created:todayStr()}); lsSet("passt-gifts",mine.slice(0,20));
+    showGift(code);
+  }).catch(function(){ toast("Geschenk-Code konnte nicht erstellt werden — bitte nochmal versuchen."); });
+}
+function giftURL(code){ return baseURL()+"#/einloesen/"+code; }
+function showGift(code){
+  modal(function(box,close){
+    box.appendChild(h("h3",{text:"Dein Geschenk ist bereit 🎁"}));
+    box.appendChild(h("p",{class:"hint",style:"margin:0",text:"Schick den Code an die Person, die immer organisiert. Einlösen geht in der App oder auf der Website unter „Geschenk einlösen“."}));
+    box.appendChild(h("div",{class:"giftcode",text:formatCode(code)}));
+    var msg="🎁 Ich schenk dir Passt. genau. — weil du immer alles organisierst! Einlösen: "+giftURL(code)+" (Code "+formatCode(code)+")";
+    box.appendChild(h("div",{class:"stack"},
+      h("a",{class:"btn btn-wa",href:"https://wa.me/?text="+encodeURIComponent(msg),target:"_blank",rel:"noopener",text:"Per WhatsApp verschenken"}),
+      h("button",{class:"btn btn-ghost",text:"Fertig",onclick:function(){close();render();}})));
+  });
+}
+
+/* ---------- Modal & Toast ---------- */
+function modal(build){
+  var bg=h("div",{class:"modal-bg"}), box=h("div",{class:"modal",role:"dialog","aria-modal":"true"});
+  function close(){ if(bg.parentNode) bg.parentNode.removeChild(bg); }
+  bg.addEventListener("click",function(e){ if(e.target===bg) close(); });
+  bg.appendChild(box); build(box,close); document.body.appendChild(bg);
+}
+function toast(text){ ui.notice=text; render(); setTimeout(function(){ if(ui.notice===text){ ui.notice=""; render(); } },5000); }
+
+/* ================== Datenbank ================== */
+function dbGet(path){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{cache:"no-store"}).then(function(r){
+    if(!r.ok) throw new Error("GET "+r.status); return r.json(); });
+}
+function dbPut(path,val){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)})
+    .then(function(r){ if(!r.ok) throw new Error("PUT "+r.status); return r.json(); });
+}
+function dbPost(path,val){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)})
+    .then(function(r){ if(!r.ok) throw new Error("POST "+r.status); return r.json(); });
+}
+function dbDelete(path){
+  return fetch(DB_URL+"/"+ROOT+path+".json",{method:"DELETE"}).then(function(r){ if(!r.ok) throw new Error("DELETE "+r.status); });
+}
+function track(ev,data){
+  var payload={ev:ev,t:todayStr(),beta:true}; if(data) payload.d=data;
+  dbPost("/stats",payload).catch(function(){});
+}
+
+/* ================== Tages-Codierung ================== */
+function decodeDays(str,N){
+  var out=[]; if(!str||typeof str!=="string") return out;
+  str.split(",").forEach(function(part){
+    var m=part.split("-"), a=parseInt(m[0],10), b=m.length>1?parseInt(m[1],10):a;
+    if(isNaN(a)||isNaN(b)) return;
+    for(var d=Math.max(0,a); d<=Math.min(N-1,b); d++) out.push(d);
+  });
+  return out;
+}
+function encodeDays(arr){
+  var a=arr.slice().sort(function(x,y){return x-y;}), parts=[], i=0;
+  while(i<a.length){ var j=i; while(j+1<a.length&&a[j+1]===a[j]+1) j++; parts.push(j>i?a[i]+"-"+a[j]:String(a[i])); i=j+1; }
+  return parts.join(",");
+}
+
+/* ================== Meine Planer & Gruppen (Gerät) ================== */
+function myPlanners(){ return lsGet("passt-mine",[]); }
+function rememberPlanner(id,title,end,extra){
+  var old=myPlanners().filter(function(p){return p.id===id;})[0]||{};
+  var list=myPlanners().filter(function(p){return p.id!==id;});
+  var e={id:id,title:title,end:end,fixed:old.fixed||null};
+  if(extra) for(var k in extra) e[k]=extra[k];
+  list.unshift(e); lsSet("passt-mine",list.slice(0,30));
+}
+function forgetPlanner(id){ lsSet("passt-mine",myPlanners().filter(function(p){return p.id!==id;})); }
+function groups(){ return lsGet("passt-groups",[]); }
+function saveGroups(g){ lsSet("passt-groups",g); }
+function groupById(id){ return groups().filter(function(g){return g.id===id;})[0]||null; }
+function upsertGroup(g){ var all=groups().filter(function(x){return x.id!==g.id;}); all.unshift(g); saveGroups(all); }
+
+/* ================== Router ================== */
+var view={name:"home"};
+function route(){
+  var hs=location.hash.replace(/^#\/?/,""), q="";
+  if(hs.indexOf("?")>=0){ q=hs.split("?")[1]; hs=hs.split("?")[0]; }
+  stopLive(); ui.notice="";
+  if(hs==="neu"){ view={name:"create"}; var g=(q.match(/g=([^&]+)/)||[])[1]; if(g) draft.group=g; render(); toTop(); }
+  else if(hs==="preise"||hs==="pro"){ view={name:"preise",ctx:(q.match(/f=([^&]+)/)||[])[1]||""}; render(); toTop(); }
+  else if(hs.indexOf("einloesen")===0){ view={name:"redeem",code:hs.split("/")[1]||""}; render(); toTop(); }
+  else if(hs.indexOf("p/")===0){
+    var parts=hs.split("/");
+    if(parts[2]==="admin"&&parts[3]){ lsSet("passt-admin-"+parseCode(parts[1]),parts[3]); location.replace("#/p/"+parts[1]); return; }
+    openPlanner(parts[1]);
+  }
+  else { view={name:"home"}; render(); toTop(); }
+}
+window.addEventListener("hashchange",route);
+
+/* ================== Planer-Zustand ================== */
+var P=null;
+function nTermine(n){ return n+(n===1?" gemeinsamer Termin":" gemeinsame Termine"); }
+var ui={mode:"list",editingName:null,draftName:"",busy:new Set(),poll:[],nameError:"",notice:"",saving:false,confirmDelete:false,live:false,copied:"",voteSel:[]};
+function myNameFor(id){ return lsGet("passt-name-"+id,null); }
+
+function buildCalendarInfo(meta){
+  var start=parseDate(meta.start), end=parseDate(meta.end);
+  var N=Math.round((end-start)/86400000)+1;
+  function dateOf(off){ return new Date(start.getFullYear(),start.getMonth(),start.getDate()+off); }
+  var months=[],off=0;
+  while(off<N){
+    var dt=dateOf(off), y=dt.getFullYear(), m=dt.getMonth(), from=off;
+    while(off<N){ var t=dateOf(off); if(t.getMonth()!==m||t.getFullYear()!==y) break; off++; }
+    months.push({y:y,m:m,fromOff:from,toOff:off-1});
+  }
+  return {N:N,months:months,dateOf:dateOf};
+}
+function planOf(m){
+  if(TIERS[m.plan]) return m.plan;
+  if(m.cap==="pro") return "genau";
+  return "scho";
+}
+function applyPlanner(id,raw){
+  if(!raw||!raw.meta||!raw.meta.start||!raw.meta.end){ P={id:id,missing:true}; return; }
+  var m=raw.meta;
+  var meta={
+    title:String(m.title||"Unser Termin").slice(0,60), start:m.start, end:m.end,
+    nights:(function(v){return isNaN(v)?2:Math.min(7,Math.max(0,v));})(parseInt(m.nights,10)),
+    plan:planOf(m), trial:!!m.trial, owner:m.owner||null, kind:m.kind==="umfrage"?"umfrage":"fenster",
+    options:Array.isArray(m.options)?m.options.slice(0,30):[],
+    vote:m.vote&&Array.isArray(m.vote.opts)?m.vote:null,
+    fixed:m.fixed||null, group:m.group||null, history:Array.isArray(m.history)?m.history:[],
+    org:m.org?String(m.org).slice(0,60):"", admins:m.admins||null, created:m.created||""
+  };
+  meta.cap=TIERS[meta.plan].cap;
+  var cal=buildCalendarInfo(meta);
+  var people=[];
+  if(raw.people&&typeof raw.people==="object"){
+    Object.keys(raw.people).forEach(function(k){
+      var p=raw.people[k]; if(!p||typeof p.name!=="string") return;
+      var name=p.name.trim().slice(0,40);
+      if(!name||people.some(function(q){return q.name===name;})) return;
+      people.push({key:k,name:name,busy:decodeDays(p.busy,cal.N),
+        poll:typeof p.poll==="string"?p.poll.split(","):[]});
+    });
+  }
+  people.sort(function(a,b){return a.name.localeCompare(b.name,"de");});
+  var votes={}; if(raw.votes&&typeof raw.votes==="object") Object.keys(raw.votes).forEach(function(k){ if(typeof raw.votes[k]==="string") votes[k]=raw.votes[k].split(","); });
+  var rsvp={}; if(raw.rsvp&&typeof raw.rsvp==="object") Object.keys(raw.rsvp).forEach(function(k){ rsvp[k]=raw.rsvp[k]; });
+  P={id:id,meta:meta,people:people,votes:votes,rsvp:rsvp,N:cal.N,months:cal.months,dateOf:cal.dateOf};
+}
+function feat(){ return RANK[P.meta.plan]>=1; }             /* Passt genau.-Funktionen */
+function featAlle(){ return P.meta.plan==="alle"; }
+function isAdmin(){
+  if(!P||P.missing) return false;
+  if(P.meta.owner) return P.meta.owner===DEVICE || (P.meta.admins&&lsGet("passt-admin-"+P.id,null)===P.meta.admins);
+  return myPlanners().some(function(p){return p.id===P.id;});
+}
+function meKey(){ var n=myNameFor(P.id); return n&&P.people.some(function(p){return p.name===n;})?keyFor(n):null; }
+
+var pendingShareNew=false;
+function openPlanner(id){
+  id=parseCode(id);
+  view={name:"planner",id:id};
+  P=null; ui.mode="loading"; render(); toTop();
+  dbGet("/p/"+id).then(function(raw){
+    applyPlanner(id,raw);
+    if(!P.missing) rememberVisit();
+    ui.mode=P.missing?"missing":(pendingShareNew?"share-new":"list");
+    pendingShareNew=false;
+    render(); startLive(id); startPolling(id);
+  }).catch(function(){ ui.mode="error"; render(); });
+}
+function rememberVisit(){
+  if(myPlanners().some(function(p){return p.id===P.id;})) rememberPlanner(P.id,P.meta.title,P.meta.end,{fixed:fixedDateStr()});
+}
+function refreshPlanner(){
+  if(!P) return Promise.resolve();
+  return dbGet("/p/"+P.id).then(function(raw){
+    var keep=ui.mode; applyPlanner(P.id,raw);
+    if(keep==="list"&&!P.missing) render();
+  });
+}
+
+/* ================== Live ================== */
+var es=null,pollTimer=null,refreshQueued=false;
+function queueRefresh(){ if(refreshQueued) return; refreshQueued=true; setTimeout(function(){ refreshQueued=false; refreshPlanner().catch(function(){}); },400); }
+function startLive(id){
+  if(es){ es.close(); es=null; }
+  try{
+    es=new EventSource(DB_URL+"/"+ROOT+"/p/"+id+".json");
+    es.addEventListener("put",function(){ ui.live=true; queueRefresh(); });
+    es.addEventListener("patch",function(){ ui.live=true; queueRefresh(); });
+    es.onerror=function(){ ui.live=false; if(es){es.close();es=null;}
+      setTimeout(function(){ if(view.name==="planner"&&view.id===id&&!document.hidden) startLive(id); },15000); };
+  }catch(e){}
+}
+function stopLive(){ if(es){es.close();es=null;} if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
+function startPolling(id){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer=setInterval(function(){
+    if(view.name==="planner"&&view.id===id&&ui.mode==="list"&&!document.hidden) refreshPlanner().catch(function(){});
+  },5000);
+}
+/* Hintergrund-Tab: Live-Verbindung schließen (Firebase: max. 100 gleichzeitige Verbindungen gratis) */
+document.addEventListener("visibilitychange",function(){
+  if(view.name!=="planner"||!P||P.missing) return;
+  if(document.hidden){ if(es){es.close();es=null;} ui.live=false; }
+  else { startLive(P.id); refreshPlanner().catch(function(){}); }
+});
+
+/* ================== Fenster-Berechnung ================== */
+function durLabel(n){ if(n===0) return "1 Tag"; return n+(n===1?" Nacht":" Nächte")+" · "+(n+1)+" Tage"; }
+function computeSlots(){
+  var len=P.meta.nights+1,out=[];
+  for(var s=0;s+len-1<P.N;s++){
+    var days=[]; for(var i=0;i<len;i++) days.push(s+i);
+    var cant=P.people.filter(function(p){ return days.some(function(d){return p.busy.indexOf(d)>=0;}); }).map(function(p){return p.name;});
+    var sat=days.some(function(d){return P.dateOf(d).getDay()===6;});
+    var sun=days.some(function(d){return P.dateOf(d).getDay()===0;});
+    out.push({s:s,e:s+len-1,cant:cant,can:P.people.length-cant.length,
+      fullWeekend:len===1?(sat||sun):(sat&&sun),
+      wkd:days.filter(function(d){var g=P.dateOf(d).getDay();return g===0||g===6;}).length});
+  }
+  return out;
+}
+function fmt(off){ return dShort(P.dateOf(off)); }
+function rangeTxt(s,e){ return s===e?fmt(s):fmt(s)+" – "+fmt(e); }
+function optTxt(o){ var d=parseDate(o.d); return dShort(d)+(o.t?" · "+o.t+" Uhr":""); }
+
+/* ---------- Fixierter Termin ---------- */
+function fixedInfo(){
+  var f=P.meta.fixed; if(!f) return null;
+  if(P.meta.kind==="umfrage"){
+    var o=P.meta.options[f.opt]; if(!o) return null;
+    var d=parseDate(o.d); return {start:d,end:d,label:dShort(d)+" "+d.getFullYear()+(o.t?" · "+o.t+" Uhr":""),time:o.t||""};
+  }
+  if(typeof f.s!=="number") return null;
+  var a=P.dateOf(f.s), b=P.dateOf(f.e);
+  return {start:a,end:b,label:f.s===f.e?dLong(a):dShort(a)+" – "+dLong(b),time:""};
+}
+function fixedDateStr(){ var fi=P&&!P.missing?fixedInfo():null; return fi?ds(fi.start):null; }
+function countdownTxt(d){
+  var n=daysUntil(d);
+  if(n>1) return {n:String(n),u:"Tage bis "+P.meta.title};
+  if(n===1) return {n:"1",u:"Tag — morgen geht's los!"};
+  if(n===0) return {n:"Heute",u:"geht's los — viel Spaß!"};
+  return {n:"✓",u:"Das war's — hoffentlich schön!"};
+}
+
+/* ---------- Kalender (.ics) ---------- */
+function icsDate(d){ return ds(d).replace(/-/g,""); }
+function buildICS(){
+  var fi=fixedInfo(); if(!fi) return null;
+  var lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Passt.//DE","CALSCALE:GREGORIAN","BEGIN:VEVENT",
+    "UID:"+P.id+"@passt","DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z"];
+  if(fi.time){
+    var hm=fi.time.split(":"), st=icsDate(fi.start)+"T"+hm[0]+hm[1]+"00";
+    var endH=String(Math.min(23,parseInt(hm[0],10)+2)).padStart(2,"0");
+    lines.push("DTSTART:"+st,"DTEND:"+icsDate(fi.start)+"T"+endH+hm[1]+"00");
+  }else{
+    var after=new Date(fi.end.getFullYear(),fi.end.getMonth(),fi.end.getDate()+1);
+    lines.push("DTSTART;VALUE=DATE:"+icsDate(fi.start),"DTEND;VALUE=DATE:"+icsDate(after));
+  }
+  lines.push("SUMMARY:"+P.meta.title.replace(/[,;]/g," "),"DESCRIPTION:Gefunden mit Passt. — "+shareURL(),"END:VEVENT","END:VCALENDAR");
+  return lines.join("\r\n");
+}
+function addToCalendar(){
+  var ics=buildICS(); if(!ics) return;
+  track("calendar");
+  if(isApp()&&nativeSend({cmd:"calendar",ics:ics,name:P.meta.title})) return;
+  var blob=new Blob([ics],{type:"text/calendar"}), a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=P.meta.title.replace(/[^\wäöüÄÖÜß -]/g,"")+".ics";
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
+}
+
+/* ================== Rendern ================== */
+function render(){
+  var app=document.getElementById("app"); app.textContent="";
+  if(BETA) app.appendChild(h("div",{class:"betabar"},"Beta · Käufe sind simuliert · ",h("a",{href:"#/preise",text:"Stufen testen"})));
+  if(view.name==="home") renderHome(app);
+  else if(view.name==="create") renderCreate(app);
+  else if(view.name==="preise") renderPreise(app);
+  else if(view.name==="redeem") renderRedeem(app);
+  else renderPlannerView(app);
+}
+function toTop(){ window.scrollTo(0,0); }
+function topbar(app,right){ app.appendChild(h("div",{class:"topbar"},h("a",{class:"brand",href:"#",text:"Passt."}),right||null)); }
+function tierBadge(t){ return h("span",{class:"badge "+t,text:TIERS[t].name}); }
+function lockTag(t){ return h("span",{class:"lock",text:t==="alle"?"für alle.":"genau."}); }
+function noticeBox(app){ if(ui.notice) app.appendChild(h("div",{class:"notice",role:"status",text:ui.notice})); }
+
+/* ---------- Startseite ---------- */
+function renderHome(app){
+  topbar(app,h("a",{class:"mini",href:"#/preise",text:TIERS[myTier()].name}));
+  noticeBox(app);
+  app.appendChild(h("div",{class:"tiles","aria-hidden":"true"},
+    h("span",{class:"tile x",text:"12"}),h("span",{class:"tile",text:"13"}),
+    h("span",{class:"tile win",text:"14"}),h("span",{class:"tile win",text:"15"}),
+    h("span",{class:"tile win",text:"16"}),h("span",{class:"tile x",text:"17"}),
+    h("span",{class:"tile",text:"18"})));
+  app.appendChild(h("h1",{text:"Findet den Termin, der allen passt."}));
+  app.appendChild(h("p",{class:"sub",text:"Für Grillabende, Ausflüge, Wochenendtrips, Urlaube und Vereine: Link in die Gruppe schicken, jeder streicht die Tage, an denen er nicht kann — Passt. rechnet live aus, was für alle funktioniert. Ohne Anmeldung, ohne App-Zwang."}));
+  app.appendChild(h("a",{class:"btn btn-primary",href:"#/neu",text:"Neuen Planer erstellen"}));
+
+  var all=myPlanners();
+  if(all.length){
+    app.appendChild(h("h2",{text:"Deine Planer"}));
+    var list=h("div",{class:"mylist"});
+    all.forEach(function(p){
+      var status;
+      if(p.fixed){ var n=daysUntil(parseDate(p.fixed)); status=n>1?"in "+n+" Tagen":n===1?"morgen!":n===0?"heute!":"vorbei"; }
+      else status=p.end<todayStr()?"vorbei":"läuft";
+      list.appendChild(h("a",{href:"#/p/"+p.id},h("b",{text:p.title}),h("span",{text:status})));
+    });
+    app.appendChild(list);
+  }
+  var gs=groups();
+  if(gs.length){
+    app.appendChild(h("h2",{text:"Deine Gruppen"}));
+    gs.forEach(function(g){
+      var last=(g.trips||[]).slice().sort(function(a,b){return b.date<a.date?-1:1;})[0];
+      app.appendChild(h("div",{class:"grp"},
+        h("div",null,h("b",{text:g.name}),h("span",{text:nTermine((g.trips||[]).length)+(last?" · zuletzt "+last.title:"")})),
+        h("a",{href:"#/neu?g="+g.id,text:"Neuer Termin →"})));
+    });
+  }
+  if(!all.length){
+    app.appendChild(h("h2",{text:"So funktioniert's"}));
+    var steps=h("ol",{class:"steps"});
+    [["Planer erstellen","Titel, Zeitraum und Dauer — dauert 30 Sekunden."],
+     ["Link in die Gruppe schicken","WhatsApp genügt. Niemand muss etwas installieren."],
+     ["Tage streichen","Jeder tippt die Tage an, an denen er nicht kann."],
+     ["Termin fixieren","Passt. zeigt live, was für alle passt — fixieren, Kalender, Countdown läuft."]
+    ].forEach(function(s){ steps.appendChild(h("li",null,h("span",null,h("b",{text:s[0]})," — "+s[1]))); });
+    app.appendChild(steps);
+  }
+
+  app.appendChild(h("h2",{text:"Du hast einen Code?"}));
+  var codeCard=h("div",{class:"card"});
+  var codeErr=h("p",{class:"field-error",style:"display:none"});
+  var codeInput=h("input",{type:"text",id:"home-code",placeholder:"z. B. QQKT8-EXW2E",autocomplete:"off",style:"text-transform:uppercase"});
+  codeCard.appendChild(h("label",{for:"home-code",text:"Planer- oder Geschenk-Code"}));
+  codeCard.appendChild(codeInput); codeCard.appendChild(codeErr);
+  codeCard.appendChild(h("button",{class:"btn btn-ghost",style:"width:100%;margin-top:10px",text:"Öffnen",onclick:function(){
+    var id=parseCode(codeInput.value);
+    if(id.length<6){ codeErr.textContent="Der Code hat mindestens 6 Zeichen — schau nochmal nach."; codeErr.style.display="block"; return; }
+    dbGet("/p/"+id).then(function(raw){
+      if(raw&&raw.gift) location.hash="#/einloesen/"+id; else location.hash="#/p/"+id;
+    }).catch(function(){ location.hash="#/p/"+id; });
+  }}));
+  app.appendChild(codeCard);
+
+  app.appendChild(h("div",{class:"footer"},h("span",null,"Passt. — made in Tirol"),h("a",{href:"#/preise",text:"Stufen & Preise"})));
+}
+
+/* ---------- Stufen & Preise ---------- */
+function renderPreise(app){
+  topbar(app);
+  noticeBox(app);
+  var t=myTier();
+  app.appendChild(h("p",{class:"eyebrow",text:"Einmal zahlen · kein Abo für Privat"}));
+  app.appendChild(h("h1",{text:"Wie viel Passt. darf's sein?"}));
+  app.appendChild(h("p",{class:"sub",text:"Die Stufe gilt für jeden Planer, den du erstellst — und alle in deiner Gruppe sehen die Extras. Deine Gruppe zahlt nie."}));
+  if(view.ctx) app.appendChild(h("div",{class:"notice",text:{
+    vote:"Abstimmen über die passenden Termine gibt's ab Passt genau.",
+    fix:"Termin fixieren mit Kalender und Countdown gibt's ab Passt genau.",
+    group:"Gruppen merken und das Logbuch gibt's ab Passt genau.",
+    nudge:"Nachzügler anstupsen gibt's ab Passt genau.",
+    full:"Mehr Personen pro Planer: Passt genau. bis 25, Passt für alle. bis 200.",
+    umfrage:"Terminvorschläge im Doodle-Stil gibt's mit Passt für alle."}[view.ctx]||""}));
+  if(view.ctx) setTimeout(function(){ var c=document.querySelector(".tier."+(view.ctx==="umfrage"?"alle":"genau")); if(c) c.scrollIntoView({behavior:"smooth",block:"start"}); },60);
+
+  var tiers=h("div",{class:"tiers"});
+  function card(key,priceNode,items,actions){
+    var c=h("div",{class:"tier "+key});
+    if(t===key) c.appendChild(h("span",{class:"badge "+key+" yours",text:"Deine Stufe"}));
+    c.appendChild(h("h3",{text:TIERS[key].name}));
+    c.appendChild(priceNode);
+    var ul=h("ul",{class:"prolist"}); items.forEach(function(i){ ul.appendChild(h("li",{text:i})); }); c.appendChild(ul);
+    if(actions) c.appendChild(actions);
+    return c;
+  }
+  tiers.appendChild(card("scho",h("p",{class:"price",text:"Gratis, für immer"}),[
+    "Bis 8 Personen, beliebig viele Planer","Einzeltage und mehrtägige Zeitfenster, live","Teilen per WhatsApp und Code",
+    "Dein erster Planer hat alle Funktionen von Passt genau. — zum Ausprobieren"]));
+  var gPrice=h("p",{class:"price"},founderActive()?"Gründungspreis "+PRODUCTS.passt_genau.founder+" einmalig":PRODUCTS.passt_genau.price+" einmalig");
+  if(founderActive()) gPrice.appendChild(h("s",{text:PRODUCTS.passt_genau.price}));
+  if(founderActive()) gPrice.appendChild(document.createTextNode(" · bis 31. März 2027"));
+  var gAct=h("div",{class:"stack"});
+  if(RANK[t]<1) gAct.appendChild(h("button",{class:"btn btn-primary",text:"Passt genau. holen · "+genauPrice(),onclick:function(){buy("passt_genau");}}));
+  gAct.appendChild(h("button",{class:"btn btn-ghost",text:"🎁 Verschenken · "+PRODUCTS.passt_genau_geschenk.price,onclick:function(){buy("passt_genau_geschenk");}}));
+  tiers.appendChild(card("genau",gPrice,[
+    "Bis 25 Personen","Abstimmung: bis 5 passende Termine, alle stimmen Ja / Wenn's sein muss / Nein",
+    "Termin fixieren: Kalendereintrag für alle + Countdown","Gruppe merken + Logbuch eurer gemeinsamen Trips",
+    "Nachzügler anstupsen, Erinnerungen in der App","Wirkt für die ganze Gruppe"],gAct));
+  var aAct=h("div",{class:"stack"});
+  if(t!=="alle") aAct.appendChild(h("button",{class:"btn btn-primary",style:"background:var(--gold);color:#fff",text:"Verein · 39 € / Jahr",onclick:function(){buy("passt_alle_verein");}}));
+  aAct.appendChild(h("button",{class:"btn btn-ghost",text:"Event-Pass für einen Planer · 9,99 €"+(eventCredits()?" ("+eventCredits()+" übrig)":""),onclick:function(){buy("passt_alle_event");}}));
+  tiers.appendChild(card("alle",h("p",{class:"price",text:"Verein 39 €/Jahr · Event-Pass 9,99 €"}),[
+    "Alles aus Passt genau.","Bis 200 Personen","Terminvorschläge mit Uhrzeit — Umfrage im Doodle-Stil",
+    "Zu- und Absagen nach dem Fixieren","Mehrere Admins per Admin-Link, Vereinsname im Planer","Export als Tabelle"],aAct));
+  app.appendChild(tiers);
+
+  var gifts=lsGet("passt-gifts",[]);
+  if(gifts.length){
+    app.appendChild(h("h2",{text:"Deine Geschenk-Codes"}));
+    gifts.forEach(function(g){ app.appendChild(h("div",{class:"grp"},h("div",null,h("b",{text:formatCode(g.code)}),h("span",{text:"erstellt "+g.created})),
+      h("a",{href:"#",text:"Zeigen",onclick:function(e){e.preventDefault();showGift(g.code);}}))); });
+  }
+  app.appendChild(h("div",{class:"stack"},
+    h("a",{class:"btn btn-ghost",href:"#/einloesen",text:"Geschenk-Code einlösen"}),
+    h("a",{class:"btn btn-ghost",href:"#",text:"Zurück"})));
+  if(BETA){
+    app.appendChild(h("details",{style:"margin-top:18px"},h("summary",{text:"Beta-Werkzeuge"}),
+      h("div",{class:"stack"},
+        h("button",{class:"btn btn-ghost",text:"Auf Passt scho. zurücksetzen (Kauf + Probe-Planer)",onclick:function(){
+          ["passt-tier","passt-pro","passt-event-credits","passt-trial-used","passt-verein-until"].forEach(lsDel); toast("Zurückgesetzt — du bist wieder bei Passt scho.");}}))));
+  }
+}
+
+/* ---------- Geschenk einlösen ---------- */
+function renderRedeem(app){
+  topbar(app); noticeBox(app);
+  app.appendChild(h("h1",{text:"Geschenk einlösen"}));
+  app.appendChild(h("p",{class:"sub",text:"Jemand hat dir Passt genau. geschenkt? Code eingeben — fertig."}));
+  var card=h("div",{class:"card"});
+  var inp=h("input",{type:"text",id:"gift",value:view.code?formatCode(view.code):"",placeholder:"z. B. AB3K9-X2QA7",style:"text-transform:uppercase"});
+  var err=h("p",{class:"field-error",style:"display:none"});
+  card.appendChild(h("label",{for:"gift",text:"Geschenk-Code"})); card.appendChild(inp); card.appendChild(err);
+  card.appendChild(h("button",{class:"btn btn-primary",style:"margin-top:12px",text:"Einlösen",onclick:function(){
+    var id=parseCode(inp.value);
+    function fail(t){ err.textContent=t; err.style.display="block"; }
+    dbGet("/p/"+id).then(function(raw){
+      if(!raw||!raw.gift) return fail("Diesen Geschenk-Code gibt es nicht — bitte prüfen.");
+      if(raw.gift.used&&raw.gift.used!==DEVICE) return fail("Dieser Code wurde schon eingelöst.");
+      return dbPut("/p/"+id+"/gift/used",DEVICE).then(function(){
+        setTier("genau"); track("gift-redeem"); location.hash="#"; setTimeout(function(){toast("🎁 Passt genau. ist jetzt deins — viel Spaß beim Organisieren!");},50);
+      });
+    }).catch(function(){ fail("Verbindung fehlgeschlagen — bitte nochmal versuchen."); });
+  }}));
+  app.appendChild(card);
+}
+
+/* ---------- Planer erstellen ---------- */
+var draft={title:"",start:"",end:"",nights:2,err:"",kind:"fenster",options:[{d:"",t:""},{d:"",t:""}],org:"",group:"",useEvent:false};
+function usesEventPass(){ return myTier()!=="alle"&&eventCredits()>0&&(draft.useEvent||draft.kind==="umfrage"); }
+function createPlan(){
+  if(usesEventPass()) return "alle";
+  var t=myTier(); if(t!=="scho") return t;
+  return trialUsed()?"scho":"genau";
+}
+function renderCreate(app){
+  topbar(app);
+  app.appendChild(h("h1",{text:"Neuer Planer"}));
+  var plan=createPlan(), canAlle=myTier()==="alle"||eventCredits()>0;
+  var card=h("div",{class:"card"});
+
+  card.appendChild(h("label",{text:"Was wollt ihr finden?"}));
+  card.appendChild(h("div",{class:"seg",role:"tablist"},
+    h("button",{class:draft.kind==="fenster"?"on":"",text:"Freie Tage finden",onclick:function(){draft.kind="fenster";render();}}),
+    h("button",{class:draft.kind==="umfrage"?"on":"",onclick:function(){draft.kind="umfrage";render();}},"Termine vorschlagen",canAlle?null:lockTag("alle"))));
+  card.appendChild(h("p",{class:"hint",style:"margin-top:6px",text:draft.kind==="fenster"?
+    "Ihr legt einen Zeitraum fest, jeder streicht seine Tage — Passt. rechnet aus, was für alle geht.":
+    "Du schlägst feste Termine vor (gern mit Uhrzeit), alle stimmen ab — wie Doodle, nur ohne Werbung."}));
+
+  card.appendChild(h("label",{for:"c-title",text:"Worum geht's?"}));
+  card.appendChild(h("input",{type:"text",id:"c-title",placeholder:draft.kind==="fenster"?"z. B. Skiwochenende":"z. B. Probe Frühjahrskonzert",value:draft.title,
+    oninput:function(e){draft.title=e.target.value;draft.err="";}}));
+
+  if(draft.kind==="umfrage"&&!canAlle){
+    card.appendChild(h("div",{class:"notice",style:"margin-top:14px"},"Terminvorschläge im Doodle-Stil gibt's mit ",h("b",{text:"Passt für alle."})," — als Verein (39 €/Jahr) oder als Event-Pass für einen Planer (9,99 €)."));
+    card.appendChild(h("a",{class:"btn btn-primary",href:"#/preise?f=umfrage",text:"Passt für alle. ansehen"}));
+    app.appendChild(card); return;
+  }
+
+  if(draft.kind==="fenster"){
+    card.appendChild(h("label",{for:"c-start",text:"Frühester Tag"}));
+    card.appendChild(h("input",{type:"date",id:"c-start",value:draft.start,min:todayStr(),oninput:function(e){draft.start=e.target.value;draft.err="";}}));
+    card.appendChild(h("label",{for:"c-end",text:"Spätester Tag"}));
+    card.appendChild(h("input",{type:"date",id:"c-end",value:draft.end,min:todayStr(),oninput:function(e){draft.end=e.target.value;draft.err="";}}));
+    card.appendChild(h("label",{text:"Wie lange dauert es?"}));
+    card.appendChild(h("div",{class:"stepper"},
+      h("button",{text:"−","aria-label":"Kürzer",onclick:function(){if(draft.nights>0){draft.nights--;render();}}}),
+      h("b",{text:durLabel(draft.nights)}),
+      h("button",{text:"+","aria-label":"Länger",onclick:function(){if(draft.nights<7){draft.nights++;render();}}})));
+    card.appendChild(h("p",{class:"hint",style:"margin-top:6px",text:"Lässt sich später jederzeit ändern."}));
+  }else{
+    card.appendChild(h("label",{text:"Terminvorschläge"}));
+    draft.options.forEach(function(o,i){
+      card.appendChild(h("div",{class:"optrow"},
+        h("input",{type:"date",value:o.d,min:todayStr(),"aria-label":"Datum "+(i+1),oninput:function(e){o.d=e.target.value;draft.err="";}}),
+        h("input",{type:"time",value:o.t,"aria-label":"Uhrzeit "+(i+1)+" (optional)",oninput:function(e){o.t=e.target.value;}}),
+        h("button",{text:"×","aria-label":"Vorschlag entfernen",onclick:function(){ if(draft.options.length>2){draft.options.splice(i,1);render();} }})));
+    });
+    card.appendChild(h("button",{class:"btn btn-ghost",style:"width:100%",text:"+ Termin hinzufügen",onclick:function(){
+      if(draft.options.length<30){ var last=draft.options[draft.options.length-1]; draft.options.push({d:"",t:last?last.t:""}); render(); }}}));
+    card.appendChild(h("p",{class:"hint",style:"margin-top:6px",text:"Uhrzeit ist optional — leer lassen für ganztägig."}));
+  }
+
+  if(RANK[plan]>=2||canAlle){
+    card.appendChild(h("label",{for:"c-org",text:"Verein / Veranstalter (optional)"}));
+    card.appendChild(h("input",{type:"text",id:"c-org",placeholder:"z. B. Musikkapelle Axams",value:draft.org,oninput:function(e){draft.org=e.target.value;}}));
+  }
+  var gs=groups();
+  if(gs.length&&RANK[plan]>=1){
+    card.appendChild(h("label",{for:"c-group",text:"Mit welcher Gruppe?"}));
+    var sel=h("select",{id:"c-group",onchange:function(e){draft.group=e.target.value;}},h("option",{value:"",text:"Neue Runde (keine Gruppe)"}));
+    gs.forEach(function(g){ var o=h("option",{value:g.id,text:g.name+" · "+nTermine((g.trips||[]).length)}); if(draft.group===g.id) o.selected=true; sel.appendChild(o); });
+    card.appendChild(sel);
+    card.appendChild(h("p",{class:"hint",style:"margin-top:6px",text:"Das Logbuch eurer gemeinsamen Termine wandert in den neuen Planer."}));
+  }
+  if(myTier()!=="alle"&&eventCredits()>0&&draft.kind==="umfrage"){
+    card.appendChild(h("p",{class:"notice",style:"margin-top:14px",text:"Für diese Umfrage wird ein Event-Pass eingesetzt ("+eventCredits()+" übrig)."}));
+  }else if(myTier()!=="alle"&&eventCredits()>0){
+    var cb=h("input",{type:"checkbox",id:"c-ev"}); cb.checked=draft.useEvent;
+    cb.addEventListener("change",function(){draft.useEvent=cb.checked;render();});
+    card.appendChild(h("label",{class:"check-row",for:"c-ev",style:"margin-top:14px;font-weight:500"},cb,"Event-Pass einsetzen ("+eventCredits()+" übrig) — Passt für alle. für diesen Planer"));
+  }
+
+  var pnote=plan==="genau"&&myTier()==="scho"?"Dein erster Planer: alle Funktionen von Passt genau. gratis zum Ausprobieren.":
+    "Dieser Planer wird ein „"+TIERS[plan].name+"“-Planer (bis "+TIERS[plan].cap+" Personen).";
+  card.appendChild(h("p",{class:"hint",style:"margin-top:14px"},tierBadge(plan)," ",pnote));
+
+  if(draft.err) card.appendChild(h("p",{class:"field-error",text:draft.err}));
+  var btn=h("button",{class:"btn btn-primary",style:"margin-top:12px",text:ui.saving?"Wird erstellt …":"Planer erstellen",onclick:onCreate});
+  if(ui.saving) btn.disabled=true;
+  card.appendChild(btn);
+  app.appendChild(card);
+}
+function onCreate(){
+  var title=draft.title.trim().slice(0,60);
+  if(!title){ draft.err="Gib dem Planer einen Namen."; render(); return; }
+  var plan=createPlan();
+  var meta={title:title,plan:plan,owner:DEVICE,created:todayStr(),kind:draft.kind};
+  if(draft.kind==="fenster"){
+    if(!draft.start||!draft.end){ draft.err="Bitte wähle den Zeitraum (frühester und spätester Tag)."; render(); return; }
+    var days=Math.round((parseDate(draft.end)-parseDate(draft.start))/86400000)+1;
+    if(days<draft.nights+1){ draft.err="Der Zeitraum ist kürzer als die gewählte Dauer."; render(); return; }
+    if(days>MAX_RANGE_DAYS){ draft.err="Der Zeitraum ist sehr lang — bitte maximal ein Jahr."; render(); return; }
+    meta.start=draft.start; meta.end=draft.end; meta.nights=draft.nights;
+  }else{
+    var opts=draft.options.filter(function(o){return o.d;}).map(function(o){return o.t?{d:o.d,t:o.t}:{d:o.d};});
+    opts.sort(function(a,b){return (a.d+(a.t||"")).localeCompare(b.d+(b.t||""));});
+    if(opts.length<2){ draft.err="Bitte mindestens zwei Termine vorschlagen."; render(); return; }
+    meta.options=opts; meta.start=opts[0].d; meta.end=opts[opts.length-1].d; meta.nights=0;
+  }
+  if(plan==="genau"&&myTier()==="scho") meta.trial=true;
+  if(plan==="alle"){ meta.admins=newId(); if(draft.org.trim()) meta.org=draft.org.trim().slice(0,60); }
+  var g=draft.group?groupById(draft.group):null;
+  if(g&&RANK[plan]>=1){
+    meta.group={id:g.id,name:g.name};
+    meta.history=(g.trips||[]).slice().sort(function(a,b){return a.date<b.date?-1:1;}).map(function(t){return {title:t.title,date:t.date};}).slice(-20);
+  }
+  ui.saving=true; render();
+  var id=newId();
+  dbPut("/p/"+id+"/meta",meta).then(function(){
+    ui.saving=false;
+    if(meta.trial) lsSet("passt-trial-used",true);
+    if(plan==="alle"&&myTier()!=="alle") lsSet("passt-event-credits",Math.max(0,eventCredits()-1));
+    rememberPlanner(id,title,meta.end);
+    track("create",plan+"/"+meta.kind);
+    draft={title:"",start:"",end:"",nights:2,err:"",kind:"fenster",options:[{d:"",t:""},{d:"",t:""}],org:"",group:"",useEvent:false};
+    pendingShareNew=true; location.hash="#/p/"+id;
+  }).catch(function(){ ui.saving=false; draft.err="Erstellen hat nicht geklappt — prüfe deine Internetverbindung."; render(); });
+}
+
+/* ---------- Planer-Ansicht ---------- */
+function renderPlannerView(app){
+  topbar(app,h("a",{class:"mini",href:"#/neu",text:"+ Neuer Planer"}));
+  if(ui.mode==="loading"){ app.appendChild(h("p",{class:"sub",text:"Einen Moment, der Planer wird geladen …"})); return; }
+  if(ui.mode==="error"||ui.mode==="missing"){
+    app.appendChild(h("h1",{text:ui.mode==="missing"?"Planer nicht gefunden":"Verbindung fehlgeschlagen"}));
+    app.appendChild(h("p",{class:"sub",text:ui.mode==="missing"?"Unter diesem Link liegt kein Planer (mehr). Prüfe, ob der Link vollständig kopiert wurde.":"Der Planer konnte nicht geladen werden. Prüfe kurz deine Internetverbindung."}));
+    app.appendChild(h("a",{class:"btn btn-primary",href:"#",text:"Zur Startseite"}));
+    return;
+  }
+  var ml=h("div",{class:"meta-line"});
+  if(P.meta.plan!=="scho") ml.appendChild(tierBadge(P.meta.plan));
+  if(P.meta.org) ml.appendChild(h("span",{class:"badge",text:P.meta.org}));
+  if(P.meta.group) ml.appendChild(h("span",{class:"badge",text:"👥 "+P.meta.group.name}));
+  if(ml.childNodes.length) app.appendChild(ml);
+  app.appendChild(h("p",{class:"eyebrow",text:P.meta.kind==="umfrage"?P.meta.options.length+" Terminvorschläge":rangeLabel()+" · "+durLabel(P.meta.nights)}));
+  app.appendChild(h("h1",{text:P.meta.title}));
+  if(ui.mode==="share-new"){ renderShareNew(app); return; }
+  noticeBox(app);
+  if(ui.mode==="edit"){ P.meta.kind==="umfrage"?renderPollEdit(app):renderEdit(app); return; }
+  if(ui.mode==="full"){ renderFull(app); return; }
+  if(ui.mode==="vote-setup"){ renderVoteSetup(app); return; }
+  if(ui.mode==="group-setup"){ renderGroupSetup(app); return; }
+  renderList(app);
+}
+function rangeLabel(){
+  var s=parseDate(P.meta.start),e=parseDate(P.meta.end);
+  return s.getDate()+". "+MON[s.getMonth()]+(s.getFullYear()!==e.getFullYear()?" "+s.getFullYear():"")+" – "+e.getDate()+". "+MON[e.getMonth()]+" "+e.getFullYear();
+}
+function renderShareNew(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{class:"share-title",text:"Planer erstellt!"}));
+  if(P.meta.trial) card.appendChild(h("p",{class:"notice",text:"🎉 Dein erster Planer läuft mit allen Funktionen von Passt genau. — Abstimmung, Termin fixieren mit Countdown und Kalender, Logbuch. Gratis zum Ausprobieren."}));
+  card.appendChild(h("p",{class:"hint",style:"margin:0 0 12px",text:"Schick jetzt den Link in eure Gruppe — und trag am besten gleich selbst ein."}));
+  var stack=h("div",{class:"stack"});
+  stack.appendChild(h("a",{class:"btn btn-wa",href:"https://wa.me/?text="+encodeURIComponent(shareMessage()),target:"_blank",rel:"noopener",text:"Per WhatsApp teilen"}));
+  var copied=h("p",{class:"copied",text:ui.copied});
+  stack.appendChild(h("button",{class:"btn btn-ghost",text:"Link kopieren",onclick:function(){copyText(shareURL(),copied);}}));
+  stack.appendChild(copied);
+  stack.appendChild(h("button",{class:"btn btn-primary",text:"Jetzt selbst eintragen",onclick:function(){ openEditFor(null); }}));
+  card.appendChild(stack);
+  if(featAlle()&&P.meta.admins){
+    var ac=h("p",{class:"copied"});
+    card.appendChild(h("p",{class:"hint",style:"margin:14px 0 6px",text:"Weitere Admins (z. B. Vorstand) bekommen den Admin-Link — damit dürfen sie fixieren und exportieren:"}));
+    card.appendChild(h("button",{class:"btn btn-ghost",style:"width:100%",text:"Admin-Link kopieren",onclick:function(){copyText(adminURL(),ac);}}));
+    card.appendChild(ac);
+  }
+  card.appendChild(h("p",{class:"hint",style:"margin:14px 0 0",text:"Dein Planer-Code: "+formatCode(P.id)+" — damit kommt jeder wieder rein, auch ohne Link."}));
+  app.appendChild(card);
+}
+function baseURL(){ return location.href.split("#")[0]; }
+function shareURL(){ return baseURL()+"#/p/"+P.id; }
+function adminURL(){ return shareURL()+"/admin/"+P.meta.admins; }
+function shareMessage(){
+  var verb=P.meta.kind==="umfrage"?"stimm kurz ab":"trag deine Tage ein";
+  return "⛺ "+P.meta.title+" — wann passt's dir? Bitte "+verb+" (30 Sekunden, keine Anmeldung):\n"+shareURL()+
+    "\nFalls der Link nicht aufgeht: Code "+formatCode(P.id)+" auf "+location.host+location.pathname+" eingeben.";
+}
+function copyText(txt,el){
+  function done(ok){ ui.copied=ok?"Kopiert!":"Kopieren ging nicht — bitte manuell kopieren."; if(el) el.textContent=ui.copied; }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function(){done(true);},function(){done(false);});
+  else done(false);
+}
+function goPreise(f){ location.hash="#/preise?f="+f; }
+
+/* ---------- Hauptansicht ---------- */
+function renderList(app){
+  var fi=fixedInfo();
+  if(fi) renderHero(app,fi);
+  if(P.meta.trial&&isAdmin()&&!fi) app.appendChild(h("p",{class:"hint"},tierBadge("genau")," Probe: Dein erster Planer hat alle Funktionen von Passt genau."));
+  if(!fi) app.appendChild(h("p",{class:"sub",text:P.meta.kind==="umfrage"?"Stimm kurz ab — alle sehen sofort, welcher Termin vorne liegt.":"Trag dich kurz ein — alle sehen sofort, welche Termine passen."}));
+  if(ui.live) app.appendChild(h("p",{class:"live"},h("span",{class:"dot-live"}),"live — Änderungen erscheinen sofort"));
+
+  app.appendChild(h("h2",{text:"Wer ist dabei?"}));
+  var myName=myNameFor(P.id);
+  if(P.people.length){
+    var row=h("div",{class:"people"});
+    P.people.forEach(function(p){
+      var isMe=p.name===myName;
+      var info=P.meta.kind==="umfrage"?p.poll.filter(function(v){return v==="y";}).length+"× Ja ✎":(P.N-p.busy.length)+" Tage frei ✎";
+      row.appendChild(h("button",{class:"chip"+(isMe?" me":""),onclick:function(){openEditFor(p.name);}},
+        p.name+(isMe?" (du)":"")+" ",h("small",{text:info})));
+    });
+    app.appendChild(row);
+    app.appendChild(h("p",{class:"hint",text:P.people.length+" von max. "+P.meta.cap+" · Zum Ändern auf deinen Namen tippen."}));
+  }else app.appendChild(h("p",{class:"empty",text:"Noch niemand. Mach du den Anfang!"}));
+  var isIn=myName&&P.people.some(function(p){return p.name===myName;});
+  app.appendChild(h("button",{class:"btn btn-primary",text:isIn?(P.meta.kind==="umfrage"?"Meine Antworten ändern":"Meine Tage ändern"):"+ Ich trag mich ein",onclick:function(){
+    if(!isIn&&P.people.length>=P.meta.cap){ ui.mode="full"; render(); toTop(); return; }
+    openEditFor(isIn?myName:null);
+  }}));
+
+  if(P.meta.kind==="umfrage") renderPollResults(app);
+  else{
+    if(P.meta.vote&&P.meta.vote.open&&!fi) renderVote(app);
+    renderResults(app,fi);
+  }
+
+  renderLogbook(app,fi);
+  renderTools(app,fi);
+
+  app.appendChild(h("div",{class:"footer"},
+    h("span",null,"Planer-Code: ",h("b",{style:"font-variant-numeric:tabular-nums",text:formatCode(P.id)})),
+    h("a",{href:"#",text:P.meta.plan==="scho"?"Erstellt mit Passt.":"Ein „"+TIERS[P.meta.plan].name+"“-Planer"})));
+}
+
+/* ---------- Fixiert: Countdown + Kalender (+ Zusagen) ---------- */
+function renderHero(app,fi){
+  var cd=countdownTxt(fi.start);
+  var hero=h("div",{class:"hero"});
+  hero.appendChild(h("div",{class:"k",text:"Fix! 🎉"}));
+  hero.appendChild(h("div",{class:"when",text:fi.label}));
+  hero.appendChild(h("div",{class:"count"},h("b",{text:cd.n}),h("span",{text:cd.u})));
+  hero.appendChild(h("button",{class:"btn",text:"📅 In meinen Kalender",onclick:addToCalendar}));
+  var row=h("div",{class:"row"});
+  if(isApp()) row.appendChild(h("button",{class:"btn sec",text:"🔔 Erinnern",onclick:function(){
+    nativeSend({cmd:"countdown",title:P.meta.title,date:ds(fi.start),time:fi.time||"",id:P.id}); }}));
+  row.appendChild(h("a",{class:"btn sec",href:"https://wa.me/?text="+encodeURIComponent("📅 Fix: "+P.meta.title+" — "+fi.label+"! Countdown & Kalender: "+shareURL()),target:"_blank",rel:"noopener",text:"In die Gruppe"}));
+  hero.appendChild(row);
+  if(featAlle()){
+    var me=meKey(), mine=me?P.rsvp[me]:null;
+    var yes=Object.keys(P.rsvp).filter(function(k){return P.rsvp[k]==="y";}).length;
+    var no=Object.keys(P.rsvp).filter(function(k){return P.rsvp[k]==="n";}).length;
+    hero.appendChild(h("div",{style:"margin-top:12px;font-weight:600",text:"Zusagen: "+yes+" dabei · "+no+" nicht dabei"}));
+    if(me){
+      hero.appendChild(h("div",{class:"rsvp"},
+        h("button",{class:"btn"+(mine==="y"?"":" sec"),text:"Bin dabei",onclick:function(){setRsvp("y");}}),
+        h("button",{class:"btn"+(mine==="n"?"":" sec"),text:"Kann nicht",onclick:function(){setRsvp("n");}})));
+    }else hero.appendChild(h("p",{style:"margin:8px 0 0;font-size:.88rem;opacity:.9",text:"Trag dich ein, um zu- oder abzusagen."}));
+  }
+  if(isAdmin()) hero.appendChild(h("button",{class:"linkbtn",style:"color:var(--accent-ink);margin-top:10px",text:"Fixierung aufheben",onclick:unfix}));
+  app.appendChild(hero);
+}
+function setRsvp(v){ var k=meKey(); if(!k) return; dbPut("/p/"+P.id+"/rsvp/"+k,v).then(refreshPlanner).then(render).catch(function(){toast("Speichern hat nicht geklappt.");}); }
+
+function fixSlot(fixed){
+  if(!feat()){ goPreise("fix"); return; }
+  dbPut("/p/"+P.id+"/meta/fixed",fixed).then(function(){
+    if(P.meta.vote) return dbPut("/p/"+P.id+"/meta/vote/open",false);
+  }).then(refreshPlanner).then(function(){
+    track("fix");
+    var f=fixedDateStr();
+    if(myPlanners().some(function(p){return p.id===P.id;})) rememberPlanner(P.id,P.meta.title,P.meta.end,{fixed:f});
+    if(P.meta.group) addTripToGroup(P.meta.group,f);
+    ui.mode="list"; render(); toTop();
+  }).catch(function(){ toast("Fixieren hat nicht geklappt — bitte nochmal."); });
+}
+function unfix(){
+  dbDelete("/p/"+P.id+"/meta/fixed").then(refreshPlanner).then(function(){
+    if(myPlanners().some(function(p){return p.id===P.id;})) rememberPlanner(P.id,P.meta.title,P.meta.end,{fixed:null});
+    render();
+  });
+}
+
+/* ---------- Abstimmung über passende Fenster ---------- */
+function voteCandidates(){
+  var slots=computeSlots(), Pn=P.people.length;
+  var perfect=slots.filter(function(s){return s.can===Pn&&Pn>0;}).sort(function(a,b){return (b.fullWeekend?1:0)-(a.fullWeekend?1:0)||a.s-b.s;});
+  if(perfect.length) return perfect.slice(0,12);
+  return slots.filter(function(s){return s.can>0;}).sort(function(a,b){return b.can-a.can||b.wkd-a.wkd||a.s-b.s;}).slice(0,8);
+}
+function renderVoteSetup(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{class:"share-title",text:"Abstimmung starten"}));
+  card.appendChild(h("p",{class:"hint",style:"margin:0 0 12px",text:"Wähle bis zu 5 Termine. Alle stimmen dann mit Ja, Wenn's sein muss oder Nein ab."}));
+  voteCandidates().forEach(function(sl){
+    var key=sl.s+"-"+sl.e, on=ui.voteSel.indexOf(key)>=0;
+    var cb=h("input",{type:"checkbox"}); cb.checked=on;
+    var row=h("label",{class:"check-row",style:"font-weight:500;margin:0 0 8px"},cb,
+      h("span",{style:"flex:1"},rangeTxt(sl.s,sl.e),sl.fullWeekend?h("span",{class:"tag",text:"Wochenende"}):null),
+      h("span",{class:"pill",text:sl.can+"/"+P.people.length}));
+    cb.addEventListener("change",function(){
+      var i=ui.voteSel.indexOf(key);
+      if(i>=0) ui.voteSel.splice(i,1); else if(ui.voteSel.length<5) ui.voteSel.push(key); else cb.checked=false;
+      render();
+    });
+    card.appendChild(row);
+  });
+  var go=h("button",{class:"btn btn-primary",text:"Abstimmung starten ("+ui.voteSel.length+")",onclick:function(){
+    if(ui.voteSel.length<2){ toast("Wähle mindestens 2 Termine."); return; }
+    var opts=ui.voteSel.map(function(k){var a=k.split("-");return {s:+a[0],e:+a[1]};}).sort(function(a,b){return a.s-b.s;});
+    Promise.all([dbPut("/p/"+P.id+"/meta/vote",{opts:opts,open:true}),dbDelete("/p/"+P.id+"/votes")]).then(refreshPlanner).then(function(){
+      track("vote-start"); ui.mode="list"; ui.voteSel=[]; render(); toTop();
+    }).catch(function(){toast("Starten hat nicht geklappt.");});
+  }});
+  if(ui.voteSel.length<2) go.disabled=true;
+  card.appendChild(h("div",{class:"btn-row"},h("button",{class:"btn btn-ghost",text:"Abbrechen",onclick:function(){ui.mode="list";render();}}),go));
+  app.appendChild(card);
+}
+function tally(list,count){
+  var res=[]; for(var i=0;i<count;i++) res.push({y:[],m:[],n:[]});
+  list.forEach(function(e){ e.v.forEach(function(v,i){ if(res[i]&&res[i][v]) res[i][v].push(e.name); }); });
+  res.forEach(function(r){ r.score=r.y.length*2+r.m.length; });
+  return res;
+}
+function renderVote(app){
+  var v=P.meta.vote, me=meKey(), mine=me&&P.votes[me]?P.votes[me]:[];
+  var list=P.people.filter(function(p){return P.votes[keyFor(p.name)];}).map(function(p){return {name:p.name,v:P.votes[keyFor(p.name)]};});
+  var res=tally(list,v.opts.length), best=Math.max.apply(null,res.map(function(r){return r.score;}));
+  app.appendChild(h("h2",{text:"Abstimmung · "+list.length+" von "+P.people.length+" haben abgestimmt"}));
+  v.opts.forEach(function(o,i){
+    var r=res[i], tot=Math.max(1,list.length);
+    var box=h("div",{class:"opt"+(best>0&&r.score===best?" best":"")});
+    box.appendChild(h("div",{class:"opt-head"},h("b",{text:rangeTxt(o.s,o.e)}),h("span",{class:"pill",text:r.y.length+" Ja"})));
+    box.appendChild(h("div",{class:"opt-sub",text:(r.m.length?r.m.length+"× wenn's sein muss":"")+(r.n.length?(r.m.length?" · ":"")+"Nein: "+r.n.join(", "):"")}));
+    box.appendChild(h("div",{class:"bar"},h("i",{class:"y",style:"width:"+(r.y.length/tot*100)+"%"}),h("i",{class:"m",style:"width:"+(r.m.length/tot*100)+"%"})));
+    if(me){
+      var tri=h("div",{class:"tri"});
+      ["y","m","n"].forEach(function(c){ tri.appendChild(h("button",{class:mine[i]===c?"on-"+c:"",text:VLBL[c],onclick:function(){castVote(i,c);}})); });
+      box.appendChild(tri);
+    }
+    if(isAdmin()) box.appendChild(h("button",{class:"linkbtn",style:"margin-top:8px",text:"Diesen Termin fixieren",onclick:function(){fixSlot({s:o.s,e:o.e});}}));
+    app.appendChild(box);
+  });
+  if(!me) app.appendChild(h("p",{class:"hint",text:"Trag dich zuerst ein — dann kannst du mitstimmen."}));
+}
+function castVote(i,c){
+  var me=meKey(); if(!me) return;
+  var cur=(P.votes[me]||[]).slice(); for(var k=0;k<P.meta.vote.opts.length;k++) if(!cur[k]) cur[k]="";
+  cur[i]=c;
+  P.votes[me]=cur; render();
+  dbPut("/p/"+P.id+"/votes/"+me,cur.join(",")).then(function(){ track("vote"); }).catch(function(){toast("Abstimmen hat nicht geklappt.");});
+}
+
+/* ---------- Ergebnisse (Zeitfenster) ---------- */
+function renderResults(app,fi){
+  var Pn=P.people.length;
+  if(fi){
+    if(Pn) app.appendChild(h("details",{style:"margin-top:18px"},h("summary",{text:"Alle passenden Termine anzeigen"}),resultsBlock(Pn,false)));
+    return;
+  }
+  app.appendChild(h("h2",{text:"Mögliche Termine"}));
+  if(!Pn){ app.appendChild(h("p",{class:"empty",text:"Sobald sich die Ersten eingetragen haben, erscheinen hier die Termine, die passen."})); return; }
+  var perfectCount=computeSlots().filter(function(s){return s.can===Pn;}).length;
+  if(isAdmin()&&!(P.meta.vote&&P.meta.vote.open)&&perfectCount>=2){
+    app.appendChild(h("button",{class:"btn btn-ghost",style:"width:100%;margin:0 0 10px",onclick:function(){
+      if(!feat()){ goPreise("vote"); return; } ui.voteSel=[]; ui.mode="vote-setup"; render(); toTop();
+    }},"🗳️ Abstimmung über die passenden Termine",feat()?null:lockTag("genau")));
+  }
+  app.appendChild(resultsBlock(Pn,isAdmin()));
+}
+function resultsBlock(Pn,admin){
+  var wrap=h("div");
+  var slots=computeSlots();
+  var perfect=slots.filter(function(s){return s.can===Pn;});
+  var rest=slots.filter(function(s){return s.can<Pn;}).sort(function(a,b){return b.can-a.can||b.wkd-a.wkd||a.s-b.s;});
+  function slotCard(sl,isPerfect){
+    var left=h("div",null,
+      h("div",{class:"slot-date"},rangeTxt(sl.s,sl.e),sl.fullWeekend?h("span",{class:"tag",text:"Wochenende"}):null),
+      h("div",{class:"slot-sub",text:isPerfect?(Pn===1?"Passt bisher":"Da können alle "+Pn):"Nicht dabei: "+sl.cant.join(", ")}));
+    var act=h("div",{class:"act"},h("span",{class:"pill",text:sl.can+"/"+Pn}));
+    if(admin&&isPerfect) act.appendChild(h("button",{class:"linkbtn",onclick:function(){fixSlot({s:sl.s,e:sl.e});}},"Fixieren",feat()?null:lockTag("genau")));
+    return h("div",{class:"slot"+(isPerfect?" perfect":"")},left,act);
+  }
+  if(perfect.length){
+    var sorted=perfect.slice().sort(function(a,b){return (b.fullWeekend?1:0)-(a.fullWeekend?1:0)||a.s-b.s;});
+    sorted.slice(0,6).forEach(function(sl){wrap.appendChild(slotCard(sl,true));});
+    if(sorted.length>6){
+      var det=h("details",null,h("summary",{text:(sorted.length-6)+" weitere Termine, die für alle passen"}));
+      sorted.slice(6,56).forEach(function(sl){det.appendChild(slotCard(sl,true));});
+      wrap.appendChild(det);
+    }
+  }else{
+    wrap.appendChild(h("p",{class:"hint",text:"Kein Termin passt für alle — das sind die besten Optionen:"}));
+    rest.slice(0,5).forEach(function(sl){wrap.appendChild(slotCard(sl,false));});
+    rest=rest.slice(5);
+  }
+  if(perfect.length&&rest.length){
+    var det2=h("details",null,h("summary",{text:"Termine anzeigen, die nicht für alle passen"}));
+    rest.filter(function(s){return s.can>0;}).slice(0,15).forEach(function(sl){det2.appendChild(slotCard(sl,false));});
+    wrap.appendChild(det2);
+  }
+  return wrap;
+}
+
+/* ---------- Umfrage (Doodle-Stil) ---------- */
+function renderPollResults(app){
+  var opts=P.meta.options, fi=fixedInfo();
+  var list=P.people.map(function(p){return {name:p.name,v:p.poll};});
+  var res=tally(list,opts.length), best=Math.max.apply(null,res.map(function(r){return r.score;}).concat([0]));
+  var wrap=fi?h("details",{style:"margin-top:18px"},h("summary",{text:"Alle Vorschläge anzeigen"})):app;
+  if(!fi) app.appendChild(h("h2",{text:"Terminvorschläge"}));
+  opts.forEach(function(o,i){
+    var r=res[i], tot=Math.max(1,list.length);
+    var box=h("div",{class:"opt"+(best>0&&r.score===best?" best":"")});
+    box.appendChild(h("div",{class:"opt-head"},h("b",{text:optTxt(o)}),h("span",{class:"pill",text:r.y.length+" Ja"})));
+    var sub=[]; if(r.y.length) sub.push("Ja: "+r.y.join(", ")); if(r.m.length) sub.push("wenn's sein muss: "+r.m.join(", ")); if(r.n.length) sub.push("Nein: "+r.n.join(", "));
+    box.appendChild(h("div",{class:"opt-sub",text:sub.join(" · ")||"Noch keine Antworten"}));
+    box.appendChild(h("div",{class:"bar"},h("i",{class:"y",style:"width:"+(r.y.length/tot*100)+"%"}),h("i",{class:"m",style:"width:"+(r.m.length/tot*100)+"%"})));
+    if(isAdmin()&&!fi) box.appendChild(h("button",{class:"linkbtn",style:"margin-top:8px",text:"Diesen Termin fixieren",onclick:function(){fixSlot({opt:i});}}));
+    wrap.appendChild(box);
+  });
+  if(fi) app.appendChild(wrap);
+}
+function renderPollEdit(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("label",{for:"tf-name",text:"Dein Name"}));
+  card.appendChild(h("input",{type:"text",id:"tf-name",value:ui.draftName,placeholder:"z. B. Anna",autocomplete:"off",oninput:function(e){ui.draftName=e.target.value;ui.nameError="";}}));
+  if(ui.nameError) card.appendChild(h("p",{class:"field-error",text:ui.nameError}));
+  card.appendChild(h("p",{class:"hint",style:"margin-top:14px",text:"Wie passt dir welcher Termin?"}));
+  P.meta.options.forEach(function(o,i){
+    var box=h("div",{class:"opt"},h("div",{class:"opt-head"},h("b",{text:optTxt(o)})));
+    var tri=h("div",{class:"tri"});
+    ["y","m","n"].forEach(function(c){ tri.appendChild(h("button",{class:ui.poll[i]===c?"on-"+c:"",text:VLBL[c],onclick:function(){ui.poll[i]=c;render();}})); });
+    box.appendChild(tri); card.appendChild(box);
+  });
+  editButtons(card);
+  app.appendChild(card);
+}
+
+/* ---------- Logbuch & Gruppe ---------- */
+function renderLogbook(app,fi){
+  var hist=P.meta.history||[];
+  if(!P.meta.group&&!hist.length) return;
+  var items=hist.map(function(x){return {title:x.title,date:x.date,now:false};});
+  if(fi) items.push({title:P.meta.title,date:ds(fi.start),now:true});
+  if(!items.length) return;
+  items.sort(function(a,b){return a.date<b.date?1:-1;});
+  var n=hist.length+1;
+  app.appendChild(h("h2",{text:"Logbuch"+(P.meta.group?" · "+P.meta.group.name:"")}));
+  app.appendChild(h("p",{class:"hint",text:"Euer "+n+". gemeinsamer Termin"+(hist.length?" — so weit seid ihr schon gekommen:":"")}));
+  var ul=h("ul",{class:"timeline"});
+  items.forEach(function(it){ ul.appendChild(h("li",{class:it.now?"now":""},h("b",{text:it.title}),h("span",{text:monthYear(it.date)+(it.now?" · jetzt fix":"")}))); });
+  app.appendChild(ul);
+}
+function addTripToGroup(gmeta,date){
+  var g=groupById(gmeta.id)||{id:gmeta.id,name:gmeta.name,members:[],trips:[]};
+  g.trips=(g.trips||[]).filter(function(t){return t.id!==P.id;});
+  if(date) g.trips.push({id:P.id,title:P.meta.title,date:date});
+  var names=P.people.map(function(p){return p.name;});
+  g.members=Array.from(new Set((g.members||[]).concat(names)));
+  upsertGroup(g);
+}
+function renderGroupSetup(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{class:"share-title",text:"Als Gruppe merken"}));
+  card.appendChild(h("p",{class:"hint",style:"margin:0 0 12px",text:"Beim nächsten Mal: „Neuer Termin mit "+(ui.groupName||"eurer Gruppe")+"“ mit einem Tipp — und das Logbuch wächst mit jedem Trip."}));
+  card.appendChild(h("label",{for:"g-name",text:"Name der Gruppe"}));
+  card.appendChild(h("input",{type:"text",id:"g-name",value:ui.groupName||"",placeholder:"z. B. Stammtisch",oninput:function(e){ui.groupName=e.target.value;}}));
+  card.appendChild(h("div",{class:"btn-row"},
+    h("button",{class:"btn btn-ghost",text:"Abbrechen",onclick:function(){ui.mode="list";render();}}),
+    h("button",{class:"btn btn-primary",text:"Merken",onclick:function(){
+      var name=(ui.groupName||"").trim().slice(0,40); if(!name){ toast("Gib der Gruppe einen Namen."); return; }
+      var gm={id:"g-"+newId(),name:name};
+      dbPut("/p/"+P.id+"/meta/group",gm).then(refreshPlanner).then(function(){
+        addTripToGroup(gm,fixedDateStr()); track("group"); ui.mode="list"; render(); toast("👥 „"+name+"“ gemerkt — zu finden auf der Startseite.");
+      }).catch(function(){toast("Speichern hat nicht geklappt.");});
+    }})));
+  app.appendChild(card);
+}
+
+/* ---------- Werkzeuge: anstupsen, teilen, Dauer, Admin ---------- */
+function renderTools(app,fi){
+  var admin=isAdmin();
+  if(P.meta.kind==="fenster"&&!fi){
+    app.appendChild(h("div",{class:"settings"},h("span",{text:"Wie lange dauert es?"}),
+      h("div",{class:"stepper"},
+        h("button",{text:"−","aria-label":"Kürzer",onclick:function(){changeNights(-1);}}),
+        h("b",{text:durLabel(P.meta.nights)}),
+        h("button",{text:"+","aria-label":"Länger",onclick:function(){changeNights(1);}}))));
+  }
+  var st=h("div",{class:"stack"});
+  if(!fi&&admin) st.appendChild(h("button",{class:"btn btn-ghost",onclick:nudge},"👋 Nachzügler anstupsen",feat()?null:lockTag("genau")));
+  st.appendChild(h("a",{class:"btn btn-ghost",href:"https://wa.me/?text="+encodeURIComponent(shareMessage()),target:"_blank",rel:"noopener",text:"Link per WhatsApp teilen"}));
+  if(admin&&!P.meta.group) st.appendChild(h("button",{class:"btn btn-ghost",onclick:function(){
+    if(!feat()){ goPreise("group"); return; } ui.groupName=""; ui.mode="group-setup"; render(); toTop(); }},"👥 Als Gruppe merken",feat()?null:lockTag("genau")));
+  if(admin&&featAlle()) st.appendChild(h("button",{class:"btn btn-ghost",text:"⬇︎ Als Tabelle exportieren",onclick:exportCSV}));
+  if(admin&&featAlle()&&P.meta.admins){
+    var ac=h("p",{class:"copied"});
+    st.appendChild(h("button",{class:"btn btn-ghost",text:"Admin-Link kopieren",onclick:function(){copyText(adminURL(),ac);}})); st.appendChild(ac);
+  }
+  if(admin&&P.meta.plan==="scho"&&myTier()!=="scho") st.appendChild(h("button",{class:"btn btn-primary",text:"Diesen Planer auf "+TIERS[myTier()].name+" heben",onclick:function(){upgradePlanner(myTier());}}));
+  else if(admin&&P.meta.plan!=="alle"&&eventCredits()>0) st.appendChild(h("button",{class:"btn btn-ghost",text:"Event-Pass einsetzen → Passt für alle.",onclick:function(){
+    upgradePlanner("alle",function(){lsSet("passt-event-credits",Math.max(0,eventCredits()-1));}); }}));
+  else if(admin&&P.meta.plan==="scho") st.appendChild(h("a",{class:"btn btn-ghost",href:"#/preise"},"Mehr mit ",h("b",{text:" Passt genau."})));
+  app.appendChild(st);
+}
+function upgradePlanner(t,after){
+  var upd=[dbPut("/p/"+P.id+"/meta/plan",t)];
+  if(t==="alle"&&!P.meta.admins) upd.push(dbPut("/p/"+P.id+"/meta/admins",newId()));
+  if(!P.meta.owner) upd.push(dbPut("/p/"+P.id+"/meta/owner",DEVICE));
+  Promise.all(upd).then(function(){ if(after) after(); return refreshPlanner(); }).then(function(){ track("upgrade",t); toast("Planer ist jetzt „"+TIERS[t].name+"“ — für die ganze Gruppe."); });
+}
+function nudge(){
+  if(!feat()){ goPreise("nudge"); return; }
+  var g=P.meta.group?groupById(P.meta.group.id):null;
+  var inNames=P.people.map(function(p){return p.name;});
+  var missing=g?(g.members||[]).filter(function(n){return inNames.indexOf(n)<0;}):[];
+  var txt=missing.length?"Hey 👋 Für „"+P.meta.title+"“ fehlen noch: "+missing.join(", ")+". Tragt euch kurz ein (30 Sek.):\n"+shareURL():
+    "Hey 👋 Für „"+P.meta.title+"“ sind schon "+inNames.length+" eingetragen ("+inNames.join(", ")+"). Wer fehlt noch? 30 Sek.:\n"+shareURL();
+  track("nudge");
+  window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
+}
+function exportCSV(){
+  var rows=[];
+  if(P.meta.kind==="umfrage"){
+    rows.push(["Name"].concat(P.meta.options.map(optTxt)));
+    P.people.forEach(function(p){ rows.push([p.name].concat(P.meta.options.map(function(_,i){return VLBL[p.poll[i]]||"";}))); });
+  }else{
+    rows.push(["Name","Tage frei","Tage ohne Zeit","Zusage"]);
+    P.people.forEach(function(p){ rows.push([p.name,P.N-p.busy.length,p.busy.map(fmt).join(" / "),{y:"dabei",n:"nicht dabei"}[P.rsvp[keyFor(p.name)]]||""]); });
+  }
+  var csv="﻿"+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(";");}).join("\r\n");
+  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download=P.meta.title+".csv";
+  document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+  track("export");
+}
+
+function renderFull(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("p",{class:"share-title",text:"Diese Gruppe ist voll"}));
+  card.appendChild(h("p",{style:"margin:0 0 10px",text:"In diesem Planer sind schon "+P.meta.cap+" Personen — das Maximum von „"+TIERS[P.meta.plan].name+"“. Die Person, die den Planer erstellt hat, kann ihn hochstufen: Passt genau. bis 25, Passt für alle. bis 200 Personen."}));
+  card.appendChild(h("div",{class:"stack"},
+    h("a",{class:"btn btn-primary",href:"#/preise?f=full",text:"Stufen ansehen"}),
+    h("button",{class:"btn btn-ghost",text:"Zurück",onclick:function(){ui.mode="list";render();}})));
+  app.appendChild(card);
+}
+
+/* ---------- Eintragen (Zeitfenster) ---------- */
+function openEditFor(name){
+  ui.mode="edit"; ui.editingName=name; ui.nameError=""; ui.notice=""; ui.confirmDelete=false;
+  var p=name?P.people.filter(function(x){return x.name===name;})[0]:null;
+  if(p){ ui.draftName=name; ui.busy=new Set(p.busy); ui.poll=p.poll.slice(); }
+  else{
+    var r=myNameFor(P.id);
+    ui.draftName=(r&&!P.people.some(function(q){return q.name===r;}))?r:"";
+    ui.busy=new Set(); ui.poll=[];
+  }
+  render(); toTop();
+}
+function renderEdit(app){
+  var card=h("div",{class:"card"});
+  card.appendChild(h("label",{for:"tf-name",text:"Dein Name"}));
+  card.appendChild(h("input",{type:"text",id:"tf-name",value:ui.draftName,placeholder:"z. B. Anna",autocomplete:"off",oninput:function(e){ui.draftName=e.target.value;ui.nameError="";}}));
+  if(ui.nameError) card.appendChild(h("p",{class:"field-error",text:ui.nameError}));
+  card.appendChild(h("p",{class:"hint",style:"margin-top:14px",text:"Tippe die Tage an, an denen du KEINE Zeit hast — sie werden rot durchgestrichen."+(P.months.length>1?" Mit den Knöpfen neben jedem Monat setzt du ganze Monate auf einmal.":"")}));
+  card.appendChild(h("div",{class:"legend"},h("span",null,h("span",{class:"dot dot-free"}),"kann ich"),h("span",null,h("span",{class:"dot dot-busy"}),"kann ich nicht")));
+  P.months.forEach(function(mo){
+    var wrap=h("div",{class:"month"});
+    var head=h("div",{class:"month-head"},h("b",{text:MONL[mo.m]+" "+mo.y}));
+    if(P.months.length>1) head.appendChild(h("div",{class:"mini"},
+      h("button",{text:"alles grün",onclick:function(){for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.delete(o); paintAllDays();}}),
+      h("button",{text:"alles rot",onclick:function(){for(var o=mo.fromOff;o<=mo.toOff;o++) ui.busy.add(o); paintAllDays();}})));
+    wrap.appendChild(head);
+    var cal=h("div",{class:"cal",role:"group","aria-label":"Kalender "+MONL[mo.m]+" "+mo.y});
+    ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach(function(w){cal.appendChild(h("div",{class:"cal-h",text:w}));});
+    var firstDow=(P.dateOf(mo.fromOff).getDay()+6)%7;
+    for(var b=0;b<firstDow;b++) cal.appendChild(h("div",{class:"day blank"}));
+    for(var o=mo.fromOff;o<=mo.toOff;o++)(function(o){
+      var el=h("button",{class:"day","data-off":String(o),onclick:function(ev){ if(ui.busy.has(o)) ui.busy.delete(o); else ui.busy.add(o); paintDay(ev.currentTarget,o); }},String(P.dateOf(o).getDate()));
+      paintDay(el,o); cal.appendChild(el);
+    })(o);
+    wrap.appendChild(cal); card.appendChild(wrap);
+  });
+  card.appendChild(h("div",{class:"quick"},
+    h("button",{class:"btn btn-ghost",text:"Alles auf grün",onclick:function(){ui.busy=new Set();paintAllDays();}}),
+    h("button",{class:"btn btn-ghost",text:"Alles auf rot",onclick:function(){ui.busy=new Set();for(var i=0;i<P.N;i++)ui.busy.add(i);paintAllDays();}})));
+  editButtons(card);
+  app.appendChild(card);
+}
+function editButtons(card){
+  var save=h("button",{class:"btn btn-primary",text:ui.saving?"Wird gespeichert …":"Speichern",onclick:onSaveEntry});
+  var cancel=h("button",{class:"btn btn-ghost",text:"Abbrechen",onclick:function(){ui.mode="list";render();}});
+  if(ui.saving){save.disabled=true;cancel.disabled=true;}
+  card.appendChild(h("div",{class:"btn-row"},cancel,save));
+  if(ui.editingName){
+    var del=h("button",{class:"btn btn-danger",style:"width:100%;margin-top:10px",text:ui.confirmDelete?"Wirklich löschen?":"Meinen Eintrag löschen",onclick:function(){
+      if(!ui.confirmDelete){ui.confirmDelete=true;render();return;}
+      var p=P.people.filter(function(x){return x.name===ui.editingName;})[0];
+      if(!p){ui.mode="list";render();return;}
+      ui.saving=true; render();
+      Promise.all([dbDelete("/p/"+P.id+"/people/"+p.key),dbDelete("/p/"+P.id+"/votes/"+p.key),dbDelete("/p/"+P.id+"/rsvp/"+p.key)])
+        .then(refreshPlanner).then(function(){ ui.saving=false; ui.mode="list"; ui.notice="Eintrag gelöscht."; render(); toTop(); })
+        .catch(function(){ ui.saving=false; ui.nameError="Löschen hat nicht geklappt — bitte nochmal versuchen."; render(); });
+    }});
+    if(ui.saving) del.disabled=true;
+    card.appendChild(del);
+  }
+}
+function paintDay(el,o){
+  var busy=ui.busy.has(o), dt=P.dateOf(o);
+  el.className="day"+(busy?" busy":"");
+  el.setAttribute("aria-pressed",busy?"true":"false");
+  el.setAttribute("aria-label",dt.getDate()+". "+MONL[dt.getMonth()]+", "+(busy?"keine Zeit":"Zeit"));
+}
+function paintAllDays(){ document.querySelectorAll(".day[data-off]").forEach(function(el){ paintDay(el,parseInt(el.getAttribute("data-off"),10)); }); }
+function keyFor(name){ return encodeURIComponent(name).replace(/\./g,"%2E"); }
+
+function onSaveEntry(){
+  var name=ui.draftName.trim().slice(0,40);
+  if(!name){ ui.nameError="Bitte gib zuerst deinen Namen ein."; render(); return; }
+  if(P.people.some(function(p){return p.name===name&&p.name!==ui.editingName;})){
+    ui.nameError="Diesen Namen gibt es schon. Wenn du das bist: geh zurück und tippe auf deinen Namen. Sonst nimm z. B. „"+name+" B.“"; render(); return;
+  }
+  if(!ui.editingName&&P.people.length>=P.meta.cap){ ui.mode="full"; render(); return; }
+  var rec={name:name};
+  if(P.meta.kind==="umfrage"){
+    var ans=P.meta.options.map(function(_,i){return ui.poll[i]||"n";});
+    rec.poll=ans.join(",");
+  }else rec.busy=encodeDays(Array.from(ui.busy));
+  ui.saving=true; render();
+  var work=Promise.resolve();
+  if(ui.editingName&&ui.editingName!==name){
+    var old=P.people.filter(function(x){return x.name===ui.editingName;})[0];
+    if(old) work=dbDelete("/p/"+P.id+"/people/"+old.key).catch(function(){});
+  }
+  work.then(function(){ return dbPut("/p/"+P.id+"/people/"+keyFor(name),rec); }).then(function(){
+    lsSet("passt-name-"+P.id,name);
+    if(!ui.editingName) track("join");
+    return refreshPlanner();
+  }).then(function(){
+    ui.saving=false; ui.mode="list"; render(); toTop();
+    toast("Gespeichert! Alle anderen sehen deine Auswahl automatisch.");
+  }).catch(function(){ ui.saving=false; ui.nameError="Speichern hat nicht geklappt — prüfe deine Internetverbindung."; render(); });
+}
+function changeNights(delta){
+  var n=P.meta.nights+delta; if(n<0||n>7) return;
+  dbPut("/p/"+P.id+"/meta/nights",n).then(refreshPlanner).then(render).catch(function(){ toast("Ändern hat nicht geklappt — bitte nochmal versuchen."); });
+}
+
+/* ================== Start ================== */
+if(native) nativeSend({cmd:"hello"});
+route();
+})();
+</script>
+</body>
+</html>
