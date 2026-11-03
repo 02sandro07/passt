@@ -1421,9 +1421,10 @@ function exportCSV(){
     P.people.forEach(function(p){ rows.push([p.name,P.N-p.busy.length,p.busy.map(fmt).join(" / "),{y:"dabei",n:"nicht dabei"}[P.rsvp[keyFor(p.name)]]||""]); });
   }
   var csv="﻿"+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(";");}).join("\r\n");
+  track("export");
+  if(isApp()&&nativeSend({cmd:"file",name:P.meta.title+".csv",mime:"text/csv",content:csv})) return;
   var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download=P.meta.title+".csv";
   document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
-  track("export");
 }
 
 function renderFull(app){
