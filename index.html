@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Passt.</title>
 <meta name="description" content="Passt. findet den Termin, der allen passt: Link teilen, Tage streichen, fertig. Ohne Anmeldung, ohne App-Zwang.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232E6B4E'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Georgia' font-weight='bold' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -261,6 +260,8 @@ summary{cursor:pointer;color:var(--muted);font-size:.92rem;padding:6px 2px}
   color:var(--muted);font-size:.82rem;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
 }
 .footer a{color:var(--muted)}
+.legal{text-align:center;font-size:13px;color:var(--muted);margin:22px 0 6px}
+.legal a{color:var(--muted)}
 .copied{color:var(--free-ink);font-size:.9rem;font-weight:600;text-align:center;min-height:1.4em;margin:6px 0 0}
 .share-title{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:700;font-size:1.35rem;margin:0 0 8px}
 @media (prefers-reduced-motion: no-preference){
@@ -319,28 +320,55 @@ function newId(){
 function formatCode(id){ return (id.toUpperCase().match(/.{1,5}/g)||[id]).join("-"); }
 function parseCode(s){ return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
 
+/* ================== Anmeldung (unsichtbar, anonym) ==================
+   Firebase-Anonymous-Auth per REST, ohne SDK: jedes Gerät bekommt still eine
+   zufällige Nutzer-ID. Die Datenbank-Regeln prüfen damit, wer einen Planer
+   verwalten darf. Ohne API_KEY läuft alles wie bisher ohne Anmeldung. */
+var API_KEY="";
+var LEGAL_PAGES=false;   /* Impressum/Datenschutz verlinken, sobald die Kontakt-Adresse steht */
+var EMU=lsGet("passt-emu",null);   /* nur für lokale Tests mit dem Firebase-Emulator */
+if(EMU){ DB_URL=EMU.db; API_KEY="emu"; }
+var AUTH_HOST=EMU?EMU.auth+"/":"https://";
+var AUTH=lsGet("passt-auth",null), authP=null;
+function authJson(r){ return r.json().then(function(d){ if(!r.ok){ var e=new Error("auth "+r.status); e.status=r.status; throw e; } return d; }); }
+function authSignUp(){
+  return fetch(AUTH_HOST+"identitytoolkit.googleapis.com/v1/accounts:signUp?key="+API_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:'{"returnSecureToken":true}'})
+    .then(authJson).then(function(d){ return {uid:d.localId,tok:d.idToken,rt:d.refreshToken,exp:Date.now()+(+d.expiresIn||3600)*1000}; });
+}
+function authRefresh(){
+  return fetch(AUTH_HOST+"securetoken.googleapis.com/v1/token?key="+API_KEY,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(AUTH.rt)})
+    .then(authJson).then(function(d){ return {uid:d.user_id,tok:d.id_token,rt:d.refresh_token,exp:Date.now()+(+d.expires_in||3600)*1000}; });
+}
+function authValid(a){ return !!(a&&a.tok&&a.exp>Date.now()+120000); }
+function authReady(){
+  if(!API_KEY) return Promise.resolve(null);
+  if(authValid(AUTH)) return Promise.resolve(AUTH);
+  if(authP) return authP;
+  var other=lsGet("passt-auth",null);          /* anderer Tab hat evtl. schon erneuert */
+  if(authValid(other)){ AUTH=other; return Promise.resolve(AUTH); }
+  if(other&&other.rt) AUTH=other;
+  var req=(AUTH&&AUTH.rt)?authRefresh().catch(function(e){ if(e.status===400) return authSignUp(); throw e; }):authSignUp();
+  authP=req.then(function(a){ AUTH=a; lsSet("passt-auth",a); authP=null; return a; },
+                 function(){ authP=null; return null; });
+  return authP;
+}
+function myUid(){ return AUTH&&AUTH.uid||null; }
+authReady();   /* früh anmelden, damit beim Erstellen die ID schon da ist */
+
 /* ================== Datenbank ================== */
-function dbGet(path){
-  return fetch(DB_URL+"/"+ROOT+path+".json",{cache:"no-store"}).then(function(r){
-    if(!r.ok) throw new Error("GET "+r.status);
-    return r.json();
-  });
+function dbURL(path){
+  var q=[]; if(EMU) q.push("ns="+EMU.ns);
+  if(AUTH&&AUTH.tok&&AUTH.exp>Date.now()) q.push("auth="+encodeURIComponent(AUTH.tok));
+  return DB_URL+"/"+ROOT+path+".json"+(q.length?"?"+q.join("&"):"");
 }
-function dbPut(path,val){
-  return fetch(DB_URL+"/"+ROOT+path+".json",{
-    method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)
-  }).then(function(r){ if(!r.ok) throw new Error("PUT "+r.status); return r.json(); });
+function dbReq(path,opt,label){
+  return authReady().then(function(){ return fetch(dbURL(path),opt); })
+    .then(function(r){ if(!r.ok) throw new Error(label+" "+r.status); return r; });
 }
-function dbPost(path,val){
-  return fetch(DB_URL+"/"+ROOT+path+".json",{
-    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)
-  }).then(function(r){ if(!r.ok) throw new Error("POST "+r.status); return r.json(); });
-}
-function dbDelete(path){
-  return fetch(DB_URL+"/"+ROOT+path+".json",{method:"DELETE"}).then(function(r){
-    if(!r.ok) throw new Error("DELETE "+r.status);
-  });
-}
+function dbGet(path){ return dbReq(path,{cache:"no-store"},"GET").then(function(r){ return r.json(); }); }
+function dbPut(path,val){ return dbReq(path,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)},"PUT").then(function(r){ return r.json(); }); }
+function dbPost(path,val){ return dbReq(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(val)},"POST").then(function(r){ return r.json(); }); }
+function dbDelete(path){ return dbReq(path,{method:"DELETE"},"DELETE").then(function(){}); }
 function track(ev,data){
   var payload={ev:ev,t:new Date().toISOString().slice(0,10)};
   if(data) payload.d=data;
@@ -476,8 +504,12 @@ function queueRefresh(){
 }
 function startLive(id){
   stopLive();
+  authReady().then(function(){ if(es||view.name!=="planner"||view.id!==id) return; openStream(id); });
+}
+function openStream(id){
   try{
-    es=new EventSource(DB_URL+"/"+ROOT+"/p/"+id+".json");
+    es=new EventSource(dbURL("/p/"+id));
+    es.addEventListener("auth_revoked",function(){ if(es){es.close();es=null;} if(AUTH) AUTH.exp=0; startLive(id); });
     es.addEventListener("put",function(){ ui.live=true; queueRefresh(); });
     es.addEventListener("patch",function(){ ui.live=true; queueRefresh(); });
     es.onerror=function(){
@@ -528,6 +560,7 @@ function render(){
   else if(view.name==="create") renderCreate(app);
   else if(view.name==="pro") renderPro(app);
   else renderPlannerView(app);
+  if(LEGAL_PAGES) app.appendChild(h("p",{class:"legal"},h("a",{href:"impressum/",text:"Impressum"}),"\u00a0\u00a0·\u00a0\u00a0",h("a",{href:"datenschutz/",text:"Datenschutz"})));
 }
 function toTop(){ window.scrollTo(0,0); }
 
@@ -660,10 +693,10 @@ function onCreate(){
   if(days>MAX_RANGE_DAYS){ draft.err="Der Zeitraum ist sehr lang — bitte maximal ein Jahr."; render(); return; }
   ui.saving=true; render();
   var id=newId();
-  dbPut("/p/"+id+"/meta",{
+  authReady().then(function(){ return dbPut("/p/"+id+"/meta",{
     title:title,start:draft.start,end:draft.end,nights:draft.nights,
-    cap:hasPro()?"pro":"free",created:todayStr()
-  }).then(function(){
+    cap:hasPro()?"pro":"free",created:todayStr(),uid:myUid()||undefined
+  }); }).then(function(){
     ui.saving=false;
     rememberPlanner(id,title,draft.end);
     track("create");
