@@ -514,7 +514,7 @@ function dateField(type,value,attrs,onv){
    zufällige Nutzer-ID. Die Datenbank-Regeln prüfen damit, wer einen Planer
    verwalten darf. Ohne API_KEY läuft alles wie bisher ohne Anmeldung. */
 var API_KEY="AIzaSyC6rieRzoX3i_29lQXPn15rXZefgggnvio";   /* Firebase-Web-API-Schlüssel (öffentlich, kein Geheimnis) */
-var LEGAL_PAGES=false;   /* Impressum/Datenschutz verlinken, sobald die Kontakt-Adresse steht */
+var LEGAL_PAGES=true;
 var EMU=lsGet("passt-emu",null);   /* nur für lokale Tests mit dem Firebase-Emulator */
 if(EMU){ DB_URL=EMU.db; API_KEY="emu"; }
 var AUTH_HOST=EMU?EMU.auth+"/":"https://";
