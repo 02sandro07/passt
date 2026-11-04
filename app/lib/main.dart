@@ -241,7 +241,8 @@ class _WebShellState extends State<WebShell> {
   }
 
   Future<void> _shareFile(String name, String mime, String content) async {
-    final safe = name.replaceAll(RegExp(r'[^\wäöüÄÖÜß .-]'), '');
+    var safe = name.replaceAll(RegExp(r'[^\wäöüÄÖÜß .-]'), '').replaceFirst(RegExp(r'^[ .]+'), '');
+    if (safe.isEmpty || !safe.contains('.')) safe = mime == 'text/calendar' ? 'Termin.ics' : 'Export.csv';
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/$safe');
     await file.writeAsString(content);
