@@ -452,7 +452,8 @@ function applyPlanner(id,raw){
     title:String(raw.meta.title||"Unser Termin").slice(0,60),
     start:raw.meta.start,end:raw.meta.end,
     nights:(function(v){return isNaN(v)?2:Math.min(7,Math.max(0,v));})(parseInt(raw.meta.nights,10)),
-    cap:raw.meta.cap==="pro"?PRO_MAX_PEOPLE:FREE_MAX_PEOPLE
+    cap:raw.meta.cap==="pro"?PRO_MAX_PEOPLE:FREE_MAX_PEOPLE,
+    uid:typeof raw.meta.uid==="string"?raw.meta.uid:null
   };
   var cal=buildCalendarInfo(meta);
   var people=[];
@@ -838,12 +839,16 @@ function renderList(app){
 
   renderResults(app);
 
-  var minus=h("button",{text:"−",onclick:function(){changeNights(-1);},"aria-label":"Kürzer"});
-  var plus=h("button",{text:"+",onclick:function(){changeNights(1);},"aria-label":"Länger"});
-  app.appendChild(h("div",{class:"settings"},
-    h("span",{text:"Wie lange dauert es?"}),
-    h("div",{class:"stepper"},minus,
-      h("b",{text:durLabel(P.meta.nights)}),plus)));
+  /* Dauer ändern darf laut Datenbank-Regeln nur, wer den Planer erstellt hat (Altplaner ohne uid: alle) */
+  var canManage=!P.meta.uid || P.meta.uid===myUid() || myPlanners().some(function(p){return p.id===P.id;});
+  if(canManage){
+    var minus=h("button",{text:"−",onclick:function(){changeNights(-1);},"aria-label":"Kürzer"});
+    var plus=h("button",{text:"+",onclick:function(){changeNights(1);},"aria-label":"Länger"});
+    app.appendChild(h("div",{class:"settings"},
+      h("span",{text:"Wie lange dauert es?"}),
+      h("div",{class:"stepper"},minus,
+        h("b",{text:durLabel(P.meta.nights)}),plus)));
+  }
 
   app.appendChild(h("div",{class:"stack"},
     h("a",{class:"btn btn-ghost",

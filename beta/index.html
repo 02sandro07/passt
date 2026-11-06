@@ -1462,7 +1462,7 @@ function renderGroupSetup(app){
 /* ---------- Werkzeuge: anstupsen, teilen, Dauer, Admin ---------- */
 function renderTools(app,fi){
   var admin=isAdmin();
-  if(P.meta.kind==="fenster"&&!fi){
+  if(P.meta.kind==="fenster"&&!fi&&isAdmin()){
     app.appendChild(h("div",{class:"settings"},h("span",{text:"Wie lange dauert es?"}),
       h("div",{class:"stepper"},
         h("button",{text:"−","aria-label":"Kürzer",onclick:function(){changeNights(-1);}}),
